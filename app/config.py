@@ -11,6 +11,8 @@ def init_config():
     config = configparser.ConfigParser()
     config.read(CONFIG_PATH)
 
+    print(config)
+
     if not os.path.exists(CONFIG_PATH) or len(config.sections()) == 0:
         config.read_string(DEFAULT_CONFIG)
         with open(os.path.abspath(CONFIG_PATH), 'w+') as config_file:

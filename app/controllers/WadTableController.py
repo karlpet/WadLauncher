@@ -1,5 +1,5 @@
 from views.WadTableView import WadTableView
 
 class WadTableController:
-    def __init__(self, parentView):
-        self.view = WadTableView(parentView.verticalLayout, parentView.verticalLayoutWidget)
+    def __init__(self, root):
+        self.view = WadTableView(root)
