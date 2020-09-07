@@ -15,7 +15,6 @@ IWADS_PATH =
 class Config(configparser.ConfigParser):
     def __init__(self):
         super().__init__()
-        print('how many times is this sick constructor called?')
         
         CONFIG_DIRECTORY = '../dev_data'
         CONFIG_PATH = os.path.join(CONFIG_DIRECTORY, 'wadlauncher_config.ini')
