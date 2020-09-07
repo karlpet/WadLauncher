@@ -4,7 +4,7 @@ import sys, os, subprocess
 from PyQt5 import QtWidgets, uic
 
 from controllers import WadTableController, LaunchBarController
-from config import config
+from config import Config
 
 
 class Ui(QtWidgets.QMainWindow):
@@ -16,6 +16,7 @@ class Ui(QtWidgets.QMainWindow):
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
+    config = Config.Instance()
     window = Ui()
 
     wad_table_controller = WadTableController.WadTableController(window)
