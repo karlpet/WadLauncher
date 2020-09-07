@@ -1,10 +1,12 @@
-#from config import config
-import glob
-import os
+import glob, os
+
+from config import Config
 
 class IWadModel:
     def __init__(self):
-        path = os.path.expanduser('~/.config/gzdoom')
+        config = Config.Instance()
+
+        path = os.path.expanduser(config['PATHS']['IWADS_PATH'])
         files = glob.glob(os.path.join(os.path.abspath(path), '*.wad'))
 
         print(files)
@@ -18,5 +20,3 @@ class IWadModel:
                     self.i_wads.append(file)
 
         print(self.i_wads)
-
-IWadModel()
