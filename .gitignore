@@ -128,4 +128,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-dev_data/wads
+dev_data/
