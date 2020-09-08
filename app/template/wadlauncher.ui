@@ -42,10 +42,10 @@
         </spacer>
        </item>
        <item>
-        <widget class="QComboBox" name="sourcePortSelector"/>
+        <widget class="QComboBox" name="iWadSelector"/>
        </item>
        <item>
-        <widget class="QComboBox" name="iWadSelector"/>
+        <widget class="QComboBox" name="sourcePortSelector"/>
        </item>
        <item>
         <widget class="QPushButton" name="launchWadButton">
