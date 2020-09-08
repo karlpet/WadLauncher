@@ -3,7 +3,8 @@ import sys, os, subprocess
 
 from PyQt5 import QtWidgets, uic
 
-from controllers import WadTableController, LaunchBarController
+from controllers import WadListController, LaunchBarController
+from models import WadModel
 from config import Config
 
 
@@ -19,7 +20,9 @@ def main():
     config = Config.Instance()
     window = Ui()
 
-    wad_table_controller = WadTableController.WadTableController(window)
+    wad_model = WadModel.WadModel()
+
+    wad_table_controller = WadListController.WadListController(window, wad_model)
     launch_bar_controller = LaunchBarController.LaunchBarController(window)
 
     sys.exit(app.exec_())
