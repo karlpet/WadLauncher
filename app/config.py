@@ -9,6 +9,10 @@ DEFAULT_CONFIG = """
 [PATHS]
 WADS_PATH = ../dev_data/wads
 IWADS_PATH =
+
+[SOURCEPORTS]
+gzdoom = gzdoom -file {wad} -iwad {iwad}
+prboom-plus = prboom-plus -file {wad} -iwad {iwad}
 """
 
 @Singleton
