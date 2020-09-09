@@ -8,7 +8,8 @@ class LaunchBarView:
                  select_iwad,
                  source_ports,
                  selected_source_port_index,
-                 select_source_port):
+                 select_source_port,
+                 launch_wad_press):
         self.root = root.findChild(QtWidgets.QWidget, 'LaunchBar')
 
         self.selected_wad_name = self.root.findChild(QtWidgets.QLabel, 'selectedWadName')
@@ -23,6 +24,9 @@ class LaunchBarView:
         self.source_port_selector.addItems(source_ports)
         self.source_port_selector.setCurrentIndex(selected_source_port_index)
         self.source_port_selector.currentIndexChanged.connect(select_source_port)
+
+        self.launch_wad_button = self.root.findChild(QtWidgets.QPushButton, 'launchWadButton')
+        self.launch_wad_button.clicked.connect(launch_wad_press)
 
     def update_selected_wad_name(self, wad):
         if wad == None:

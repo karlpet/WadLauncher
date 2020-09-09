@@ -29,5 +29,8 @@ class IWadModel:
     def get_selected_iwad_index(self):
         return self.selected_iwad_index
 
+    def get_selected_iwad(self):
+        return self.iwads[self.selected_iwad_index]
+
     def select_iwad(self, index):
         self.selected_iwad_index = index
