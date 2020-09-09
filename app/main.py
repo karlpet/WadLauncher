@@ -25,7 +25,10 @@ def main():
     source_port_model = SourcePortModel.SourcePortModel()
 
     wad_table_controller = WadListController.WadListController(window, wad_model)
-    launch_bar_controller = LaunchBarController.LaunchBarController(window, iwad_model, source_port_model)
+    launch_bar_controller = LaunchBarController.LaunchBarController(window,
+                                                                    wad_model,
+                                                                    iwad_model,
+                                                                    source_port_model)
 
     sys.exit(app.exec_())
 

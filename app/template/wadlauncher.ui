@@ -24,7 +24,7 @@
        <item>
         <widget class="QLabel" name="selectedWadName">
          <property name="text">
-          <string>No wad selected</string>
+          <string></string>
          </property>
         </widget>
        </item>

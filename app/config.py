@@ -11,8 +11,8 @@ WADS_PATH = ../dev_data/wads
 IWADS_PATH =
 
 [SOURCEPORTS]
-gzdoom = gzdoom -file {wad} -iwad {iwad}
-prboom-plus = prboom-plus -file {wad} -iwad {iwad}
+gzdoom = gzdoom -file {wad} -iwad {iwad} -savedir {save_dir}
+prboom-plus = prboom-plus -file {wad} -iwad {iwad} -save {save_dir}
 """
 
 @Singleton
