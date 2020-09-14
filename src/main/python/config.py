@@ -7,7 +7,7 @@ from utils.decorators import Singleton
 
 DEFAULT_CONFIG = """
 [PATHS]
-WADS_PATH = ../dev_data/wads
+WADS_PATH = ~/.wadlauncher/wads
 IWADS_PATH =
 
 [SOURCEPORTS]
@@ -20,7 +20,7 @@ class Config(configparser.ConfigParser):
     def __init__(self):
         super().__init__()
         
-        CONFIG_DIRECTORY = '../dev_data'
+        CONFIG_DIRECTORY = os.path.expanduser('~/.wadlauncher')
         CONFIG_PATH = os.path.join(CONFIG_DIRECTORY, 'wadlauncher_config.ini')
 
         Path(CONFIG_DIRECTORY).mkdir(parents=True, exist_ok=True)
@@ -30,6 +30,8 @@ class Config(configparser.ConfigParser):
             self.read_string(DEFAULT_CONFIG)
             with open(os.path.abspath(CONFIG_PATH), 'w+') as config_file:
                 self.write(config_file)
+
+        Path(os.path.expanduser(self['PATHS']['WADS_PATH'])).mkdir(parents=True, exist_ok=True)
         
         if self['PATHS']['IWADS_PATH'] == '':
             msgBox = QMessageBox()

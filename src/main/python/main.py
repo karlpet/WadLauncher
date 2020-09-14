@@ -1,6 +1,6 @@
-#!/usr/bin/python
 import sys, os, subprocess
 
+from fbs_runtime.application_context.PyQt5 import ApplicationContext
 from PyQt5 import QtWidgets, uic
 
 from controllers import WadListController, LaunchBarController
@@ -9,16 +9,18 @@ from config import Config
 
 
 class Ui(QtWidgets.QMainWindow):
-    def __init__(self):
+    def __init__(self, appctxt):
         super(Ui, self).__init__()
-        uic.loadUi('./template/wadlauncher.ui', self)
+
+        template_file_path = appctxt.get_resource('template/wadlauncher.ui')
+        uic.loadUi(template_file_path, self)
 
         self.show()
 
-def main():
-    app = QtWidgets.QApplication(sys.argv)
+if __name__ == '__main__':
+    appctxt = ApplicationContext()
     config = Config.Instance()
-    window = Ui()
+    window = Ui(appctxt)
 
     wad_model = WadModel.WadModel()
     iwad_model = IWadModel.IWadModel()
@@ -30,7 +32,5 @@ def main():
                                                                     iwad_model,
                                                                     source_port_model)
 
-    sys.exit(app.exec_())
-
-if __name__ == '__main__':
-    main()
+    exit_code = appctxt.app.exec_()
+    sys.exit(exit_code)
