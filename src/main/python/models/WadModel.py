@@ -40,7 +40,7 @@ class WadModel:
 
         if wad == None: return
 
-        wads_path = self.config['PATHS']['WADS_PATH']
+        wads_path = os.path.expanduser(self.config['PATHS']['WADS_PATH'])
         wad_dir = os.path.join(wads_path, wad)
         wad_save_dir = os.path.join(wad_dir, 'saves')
         wad_file_path = os.path.join(wad_dir, wad + '.wad')
