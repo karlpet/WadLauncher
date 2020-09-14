@@ -8,7 +8,7 @@ class WadModel:
         self.subscriptions = []
 
         self.config = Config.Instance()
-        wads_path = self.config['PATHS']['WADS_PATH']
+        wads_path = os.path.expanduser(self.config['PATHS']['WADS_PATH'])
 
         self.wads = [dir for dir in os.listdir(wads_path)
                          if os.path.isdir(os.path.join(wads_path, dir))]

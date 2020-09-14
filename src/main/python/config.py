@@ -31,7 +31,7 @@ class Config(configparser.ConfigParser):
             with open(os.path.abspath(CONFIG_PATH), 'w+') as config_file:
                 self.write(config_file)
 
-        Path(self['PATHS']['WADS_PATH']).mkdir(parents=True, exist_ok=True)
+        Path(os.path.expanduser(self['PATHS']['WADS_PATH'])).mkdir(parents=True, exist_ok=True)
         
         if self['PATHS']['IWADS_PATH'] == '':
             msgBox = QMessageBox()
