@@ -15,3 +15,13 @@ Source into virtual environment and install packages:
 > source venv/bin/activate
 > pip install -r requirements_dev.txt
 ```
+
+Run project:  
+```
+> fbs run
+```
+
+Build project:  
+```
+> fbs freeze
+```
