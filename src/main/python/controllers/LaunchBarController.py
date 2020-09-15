@@ -1,27 +1,36 @@
 from views.LaunchBarView import LaunchBarView
+from utils import Launcher
 
 class LaunchBarController:
-    def __init__(self, root, wad_model, iwad_model, source_port_model):
-        self.wad_model = wad_model
-        self.iwad_model = iwad_model
-        self.source_port_model = source_port_model
+    def __init__(self, root, wads, iwads, source_ports):
+        self.all_iwads = sorted(iwads.all(), key=lambda k: k['name'])
+        self.all_source_ports = sorted(source_ports.all(), key=lambda k: k['name'])
+        self.selected_wad = None
+        self.selected_iwad = None
+        self.selected_source_port = None
         self.view = LaunchBarView(root,
-                                  iwad_model.get_iwads(),
-                                  iwad_model.get_selected_iwad_index(),
-                                  iwad_model.select_iwad,
-                                  source_port_model.get_source_ports(),
-                                  source_port_model.get_selected_source_port_index(),
-                                  source_port_model.select_source_port,
+                                  self.all_iwads,
+                                  self.all_source_ports,
+                                  self.select_iwad,
+                                  self.select_source_port,
                                   self.launch_wad_press)
 
-        wad_model.subscribe(self.wad_model_subscription)
+        wads.subscribe(self.wads_subscription)
 
-    def wad_model_subscription(self, data):
+    def wads_subscription(self, data):
         action, data = data
 
         if action == 'SELECT_WAD':
-            self.view.update_selected_wad_name(data)
+            self.selected_wad = data
+            self.view.update_selected_wad(data)
+
+    def select_iwad(self, index):
+        self.selected_iwad = self.all_iwads[index]
+
+    def select_source_port(self, index):
+        self.selected_source_port = self.all_source_ports[index]
 
     def launch_wad_press(self):
-        self.wad_model.launch_wad(self.source_port_model.get_source_port_template(),
-                                  self.iwad_model.get_selected_iwad())
+        Launcher.launch(self.selected_wad,
+                        self.selected_iwad,
+                        self.selected_source_port)

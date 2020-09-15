@@ -4,7 +4,7 @@ from fbs_runtime.application_context.PyQt5 import ApplicationContext
 from PyQt5 import QtWidgets, uic
 
 from controllers import WadListController, LaunchBarController
-from models import WadModel, IWadModel, SourcePortModel
+from models import *
 from config import Config
 
 
@@ -22,15 +22,15 @@ if __name__ == '__main__':
     config = Config.Instance()
     window = Ui(appctxt)
 
-    wad_model = WadModel.WadModel()
-    iwad_model = IWadModel.IWadModel()
-    source_port_model = SourcePortModel.SourcePortModel()
+    wads = Wads()
+    iwads = Iwads()
+    source_ports = SourcePorts()
 
-    wad_table_controller = WadListController.WadListController(window, wad_model)
+    wad_table_controller = WadListController.WadListController(window, wads)
     launch_bar_controller = LaunchBarController.LaunchBarController(window,
-                                                                    wad_model,
-                                                                    iwad_model,
-                                                                    source_port_model)
+                                                                    wads,
+                                                                    iwads,
+                                                                    source_ports)
 
     exit_code = appctxt.app.exec_()
     sys.exit(exit_code)
