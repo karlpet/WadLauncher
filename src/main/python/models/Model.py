@@ -10,7 +10,11 @@ class Model:
 
     def load(self):
         for obj in self.loader():
-            self.objects[obj['id']] = obj
+            if 'id' in obj:
+                self.objects[obj['id']] = obj
+            else:
+                id = uuid.uuid1()
+                self.objects[id] = obj
 
     def save(self):
         return self.saver(self.objects)

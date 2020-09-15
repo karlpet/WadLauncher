@@ -1,35 +1,59 @@
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore
+
+class SourcePortComboBoxModel(QtCore.QAbstractListModel):
+    def __init__(self, source_ports = [], parent=None):
+        QtCore.QAbstractListModel.__init__(self, parent)
+        self.__source_ports = source_ports
+
+    def rowCount(self, parent):
+        return len(self.__source_ports)
+    
+    def data(self, index, role):
+        if role == QtCore.Qt.DisplayRole:
+            return self.__source_ports[index.row()].get('name')
+
+class IwadComboBoxModel(QtCore.QAbstractListModel):
+    def __init__(self, iwads = [], parent=None):
+        QtCore.QAbstractListModel.__init__(self, parent)
+        self.__iwads = iwads
+
+    def rowCount(self, parent):
+        return len(self.__iwads)
+    
+    def data(self, index, role):
+        if role == QtCore.Qt.DisplayRole:
+            return self.__iwads[index.row()].get('name')
 
 class LaunchBarView:
     def __init__(self,
                  root,
                  iwads,
-                 selected_iwad_index,
-                 select_iwad,
                  source_ports,
-                 selected_source_port_index,
+                 select_iwad,
                  select_source_port,
                  launch_wad_press):
-        self.root = root.findChild(QtWidgets.QWidget, 'LaunchBar')
+        root = root.findChild(QtWidgets.QWidget, 'LaunchBar')
 
-        self.selected_wad_name = self.root.findChild(QtWidgets.QLabel, 'selectedWadName')
+        self.selected_wad_name = root.findChild(QtWidgets.QLabel, 'selectedWadName')
         self.selected_wad_name.setText('No wad selected')
 
-        self.iwad_selector = self.root.findChild(QtWidgets.QComboBox, 'iWadSelector')
-        self.iwad_selector.addItems(iwads)
-        self.iwad_selector.setCurrentIndex(selected_iwad_index)
-        self.iwad_selector.currentIndexChanged.connect(select_iwad)
+        iwad_selector = root.findChild(QtWidgets.QComboBox, 'iWadSelector')
+        iwad_selector.setModel(IwadComboBoxModel(iwads))
+        iwad_selector.currentIndexChanged.connect(select_iwad)
+        iwad_selector.setCurrentIndex(iwad_selector.findText('doom2.wad'))
+        select_iwad(iwad_selector.currentIndex())
 
-        self.source_port_selector = self.root.findChild(QtWidgets.QComboBox, 'sourcePortSelector')
-        self.source_port_selector.addItems(source_ports)
-        self.source_port_selector.setCurrentIndex(selected_source_port_index)
-        self.source_port_selector.currentIndexChanged.connect(select_source_port)
+        source_port_selector = root.findChild(QtWidgets.QComboBox, 'sourcePortSelector')
+        source_port_selector.setModel(SourcePortComboBoxModel(source_ports))
+        source_port_selector.currentIndexChanged.connect(select_source_port)
+        source_port_selector.setCurrentIndex(source_port_selector.findText('gzdoom'))
+        select_source_port(source_port_selector.currentIndex())
 
-        self.launch_wad_button = self.root.findChild(QtWidgets.QPushButton, 'launchWadButton')
-        self.launch_wad_button.clicked.connect(launch_wad_press)
+        launch_wad_button = root.findChild(QtWidgets.QPushButton, 'launchWadButton')
+        launch_wad_button.clicked.connect(launch_wad_press)
 
-    def update_selected_wad_name(self, wad):
+    def update_selected_wad(self, wad):
         if wad == None:
             self.selected_wad_name.setText('No wad selected')
         else:
-            self.selected_wad_name.setText(wad)
+            self.selected_wad_name.setText(wad['name'])

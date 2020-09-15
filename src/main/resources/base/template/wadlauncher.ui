@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>730</width>
-    <height>493</height>
+    <height>494</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,7 +16,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
-     <widget class="QListWidget" name="WadList"/>
+     <widget class="QListView" name="WadList"/>
     </item>
     <item>
      <widget class="QWidget" name="LaunchBar" native="true">
@@ -24,7 +24,7 @@
        <item>
         <widget class="QLabel" name="selectedWadName">
          <property name="text">
-          <string></string>
+          <string/>
          </property>
         </widget>
        </item>
