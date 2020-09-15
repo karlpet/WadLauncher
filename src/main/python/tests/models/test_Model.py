@@ -1,9 +1,9 @@
+from unittest import mock, TestCase
 import json
-from unittest.mock import MagicMock
 
 from models.Model import Model
-from tests.UtCaseDecorator import ut_case
 
+case = TestCase()
 
 # ----- MOCK DATA -----
 mock_data = {
@@ -18,20 +18,18 @@ def mock_loader():
 def mock_saver(data):
     return json.dumps(data)
 
-# ----- TEST CASES -----
 
-def test_creates_without_error():
+# ----- TEST CASES -----
+def test_intance_creation():
     mock_model = Model()
 
-@ut_case
-def test_loader(case):
+def test_loader():
     mock_model = Model(loader=mock_loader)
     mock_model.load()
 
     case.assertCountEqual(mock_model.all(), mock_data.values())
 
-@ut_case
-def test_saver(case):
+def test_saver():
     mock_model = Model(loader=mock_loader, saver=mock_saver)
 
     assert(mock_model.save() == '{}')
@@ -41,15 +39,21 @@ def test_saver(case):
 
     case.assertDictEqual(json.loads(json_string), mock_data)
 
-@ut_case
-def test_find(case):
+def test_create():
+    mock_model = Model(loader=mock_loader, saver=mock_saver)
+    mock_model.load()
+    wad = {'name':'foo', 'file':'foo.wad'}
+
+    id = mock_model.create(**wad)
+    assert(mock_model.find(id).items() >= wad.items())
+
+def test_find():
     mock_model = Model(loader=mock_loader)
     mock_model.load()
 
     case.assertDictEqual(mock_model.find('0'), mock_data.get('0'))
 
-@ut_case
-def test_find_by(case):
+def test_find_by():
     mock_model = Model(loader=mock_loader)
     mock_model.load()
 
@@ -62,8 +66,7 @@ def test_find_by(case):
     # Returns None if not found
     assert(mock_model.find_by(name='should not be found', file='miasma.wad') == None)
 
-@ut_case
-def test_update(case):
+def test_update():
     mock_model = Model(loader=mock_loader, saver=mock_saver)
     mock_model.load()
 
@@ -78,8 +81,7 @@ def test_update(case):
 
     case.assertRaises(KeyError, should_throw_key_error)
 
-@ut_case
-def test_delete(case):
+def test_delete():
     mock_model = Model(loader=mock_loader, saver=mock_saver)
     mock_model.load()
 
@@ -92,8 +94,8 @@ def test_delete(case):
 
 def test_subscribe():
     mock_model = Model(loader=mock_loader)
-    mock_func1 = MagicMock()
-    mock_func2 = MagicMock()
+    mock_func1 = mock.MagicMock()
+    mock_func2 = mock.MagicMock()
 
     unsubscribe = mock_model.subscribe(mock_func1)
     mock_model.subscribe(mock_func2)

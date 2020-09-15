@@ -1,3 +1,5 @@
+import uuid
+
 class Model:
     def __init__(self, **io):
         self.objects = {}
@@ -14,7 +16,15 @@ class Model:
         return self.saver(self.objects)
 
     def all(self):
-        return self.objects.values()
+        return [obj for obj in self.objects.values()]
+
+    def create(self, **kwargs):
+        id = uuid.uuid1()
+        obj = { 'id': id, **kwargs }
+
+        self.objects[id] = obj
+
+        return id
 
     def find(self, id):
         return self.objects[id]
