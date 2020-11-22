@@ -32,7 +32,7 @@ class Wads(Model):
 
         selected_wad = self.find(id)
 
-        self.wad_dir_files = [file for file in os.listdir(selected_wad['path'])]
+        self.wad_dir_files = [file for file in os.listdir(selected_wad['path']) if file != 'saves']
         self.broadcast(('SELECT_WAD', selected_wad))
     
     def get_dir_contents(self):
