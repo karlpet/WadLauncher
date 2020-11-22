@@ -15,4 +15,4 @@ def launch(wad, iwad, source_port):
 
     process_call = source_port['template'].format(wad=wad_file_path, iwad=iwad['path'], save_dir=wad_save_dir)
 
-    subprocess.call(process_call.split(' '))
+    subprocess.Popen(process_call.split(' '))
