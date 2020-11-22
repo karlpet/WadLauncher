@@ -1,7 +1,7 @@
 from unittest import mock, TestCase
 import json
 
-from models.Model import Model
+from core.base.Model import Model
 
 case = TestCase()
 

@@ -1,5 +1,7 @@
-from config import Config
-from models import Model
+import sys
+
+from app.config import Config
+from core.base.Model import Model
 
 def source_port_loader():
     config = Config.Instance()
@@ -15,3 +17,5 @@ class SourcePorts(Model):
     def __init__(self):
         Model.__init__(self, loader=source_port_loader)
         self.load()
+
+sys.modules[__name__] = SourcePorts()

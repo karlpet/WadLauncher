@@ -3,10 +3,8 @@ import sys, os, subprocess
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
 from PyQt5 import QtWidgets, uic
 
-from controllers import WadListController, LaunchBarController, WadDirController
-from models import *
-from config import Config
-
+from app.config import Config
+from core.utils.mvcimporter import *
 
 class Ui(QtWidgets.QMainWindow):
     def __init__(self, appctxt):
@@ -22,16 +20,7 @@ if __name__ == '__main__':
     config = Config.Instance()
     window = Ui(appctxt)
 
-    wads = Wads()
-    iwads = Iwads()
-    source_ports = SourcePorts()
-
-    wad_table_controller = WadListController.WadListController(window, wads)
-    launch_bar_controller = LaunchBarController.LaunchBarController(window,
-                                                                    wads,
-                                                                    iwads,
-                                                                    source_ports)
-    wad_dir_controller = WadDirController.WadDirController(window, wads)
+    models, controllers = mvcimport(os.path.dirname(os.path.abspath(__file__)), window)
 
     exit_code = appctxt.app.exec_()
     sys.exit(exit_code)

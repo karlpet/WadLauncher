@@ -1,7 +1,7 @@
-import glob, os, functools
+import glob, os, functools, sys
 
-from models import Model
-from config import Config
+from core.base.Model import Model
+from app.config import Config
 
 def iwad_loader():
     config = Config.Instance()
@@ -22,3 +22,5 @@ class Iwads(Model):
     def __init__(self):
         Model.__init__(self, loader=iwad_loader)
         self.load()
+
+sys.modules[__name__] = Iwads()
