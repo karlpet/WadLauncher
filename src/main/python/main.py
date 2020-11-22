@@ -3,7 +3,7 @@ import sys, os, subprocess
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
 from PyQt5 import QtWidgets, uic
 
-from controllers import WadListController, LaunchBarController
+from controllers import WadListController, LaunchBarController, WadDirController
 from models import *
 from config import Config
 
@@ -31,6 +31,7 @@ if __name__ == '__main__':
                                                                     wads,
                                                                     iwads,
                                                                     source_ports)
+    wad_dir_controller = WadDirController.WadDirController(window, wads)
 
     exit_code = appctxt.app.exec_()
     sys.exit(exit_code)
