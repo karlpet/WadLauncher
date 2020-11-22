@@ -2,21 +2,24 @@ import os, sys
 
 from core.base.Model import Model
 from app.config import Config
+from app.utils.Unzipper import unzip
+
+config = Config.Instance()
+wads_path = os.path.expanduser(config['PATHS']['WADS_PATH'])
+extensions = ['.wad', '.WAD', '.pk3', '.PK3']
+
+def load_wad(dir):
+    print(dir)
+
+    for file in os.listdir(dir):
+        if any((file.endswith(ext) for ext in extensions)):
+            return { 'name': os.path.basename(dir), 'file': file, 'path': dir }
+    
+    return { 'name': 'ERROR, no wad found!', 'file': '' }
 
 def wad_loader():
-    config = Config.Instance()
-    wads_path = os.path.expanduser(config['PATHS']['WADS_PATH'])
-    extensions = ['.wad', '.WAD', '.pk3']
-
-    def load_wad(index, dir):
-        for file in os.listdir(os.path.join(wads_path, dir)):
-            if any((file.endswith(ext) for ext in extensions)):
-                return { 'id': str(index), 'name': dir, 'file': file, 'path': os.path.join(wads_path, dir) }
-        
-        return { 'id': str(index), 'name': 'ERROR, no wad found!', 'file': '' }
-
-    return [load_wad(index, dir) for index, dir in enumerate(os.listdir(wads_path))
-                                 if os.path.isdir(os.path.join(wads_path, dir))]
+    return [load_wad(os.path.join(wads_path, dir)) for dir in os.listdir(wads_path)
+                                                   if os.path.isdir(os.path.join(wads_path, dir))]
 
 class Wads(Model):
     def __init__(self):
@@ -29,8 +32,15 @@ class Wads(Model):
 
         self.wad_dir_files = [file for file in os.listdir(selected_wad['path']) if file != 'saves']
         self.broadcast(('SELECT_WAD', selected_wad))
-    
+
     def get_dir_contents(self):
         return self.wad_dir_files
+    
+    def unzip_import_wad(self, file_path):
+        new_wad_dir = unzip(file_path)
+
+        id = self.create(**load_wad(new_wad_dir))
+        self.broadcast(('CREATE_WAD', id))
+
 
 sys.modules[__name__] = Wads()
