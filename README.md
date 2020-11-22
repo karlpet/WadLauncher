@@ -25,3 +25,8 @@ Build project:
 ```
 > fbs freeze
 ```
+
+Start QtDesigner
+```
+> qtchooser -run-tool=designer -qt=5
+```
