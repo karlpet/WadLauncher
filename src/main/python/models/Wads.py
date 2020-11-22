@@ -14,7 +14,7 @@ def wad_loader():
 
         for file in os.listdir(os.path.join(wads_path, dir)):
             if any((file.endswith(ext) for ext in extensions)):
-                return { 'id': str(index), 'name': dir, 'file': file }
+                return { 'id': str(index), 'name': dir, 'file': file, 'path': os.path.join(wads_path, dir) }
         
         return { 'id': str(index), 'name': 'ERROR, no wad found!', 'file': '' }
 
@@ -25,7 +25,15 @@ class Wads(Model):
     def __init__(self):
         Model.__init__(self, loader=wad_loader)
         self.load()
+        self.wad_dir_files = []
 
     def select_wad(self, id):
         print(id)
-        self.broadcast(('SELECT_WAD', self.find(id)))
+
+        selected_wad = self.find(id)
+
+        self.wad_dir_files = [file for file in os.listdir(selected_wad['path']) if file != 'saves']
+        self.broadcast(('SELECT_WAD', selected_wad))
+    
+    def get_dir_contents(self):
+        return self.wad_dir_files
