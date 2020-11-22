@@ -1,8 +1,7 @@
-import os
+import os, sys
 
-from models import Model
-from config import Config
-
+from core.base.Model import Model
+from app.config import Config
 
 def wad_loader():
     config = Config.Instance()
@@ -10,8 +9,6 @@ def wad_loader():
     extensions = ['.wad', '.WAD', '.pk3']
 
     def load_wad(index, dir):
-        print(dir)
-
         for file in os.listdir(os.path.join(wads_path, dir)):
             if any((file.endswith(ext) for ext in extensions)):
                 return { 'id': str(index), 'name': dir, 'file': file, 'path': os.path.join(wads_path, dir) }
@@ -28,8 +25,6 @@ class Wads(Model):
         self.wad_dir_files = []
 
     def select_wad(self, id):
-        print(id)
-
         selected_wad = self.find(id)
 
         self.wad_dir_files = [file for file in os.listdir(selected_wad['path']) if file != 'saves']
@@ -37,3 +32,5 @@ class Wads(Model):
     
     def get_dir_contents(self):
         return self.wad_dir_files
+
+sys.modules[__name__] = Wads()

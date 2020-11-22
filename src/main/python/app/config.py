@@ -3,7 +3,7 @@ from pathlib import Path
 
 from PyQt5.QtWidgets import QMessageBox
 
-from utils.decorators import Singleton
+from core.utils.decorators import Singleton
 
 DEFAULT_CONFIG = """
 [PATHS]

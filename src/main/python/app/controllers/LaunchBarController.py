@@ -1,10 +1,15 @@
-from views.LaunchBarView import LaunchBarView
-from utils import Launcher
+import sys
+
+from app.views.LaunchBarView import LaunchBarView
+from app.utils import Launcher
 
 class LaunchBarController:
-    def __init__(self, root, wads, iwads, source_ports):
-        self.all_iwads = sorted(iwads.all(), key=lambda k: k['name'])
-        self.all_source_ports = sorted(source_ports.all(), key=lambda k: k['name'])
+    def __init__(self):
+        pass
+
+    def show(self, root, models):
+        self.all_iwads = sorted(models.iwads.all(), key=lambda k: k['name'])
+        self.all_source_ports = sorted(models.source_ports.all(), key=lambda k: k['name'])
         self.selected_wad = None
         self.selected_iwad = None
         self.selected_source_port = None
@@ -15,7 +20,7 @@ class LaunchBarController:
                                   self.select_source_port,
                                   self.launch_wad_press)
 
-        wads.subscribe(self.wads_subscription)
+        models.wads.subscribe(self.wads_subscription)
 
     def wads_subscription(self, data):
         action, data = data
@@ -34,3 +39,5 @@ class LaunchBarController:
         Launcher.launch(self.selected_wad,
                         self.selected_iwad,
                         self.selected_source_port)
+
+sys.modules[__name__] = LaunchBarController()

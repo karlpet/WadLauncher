@@ -1,7 +1,7 @@
 import os, subprocess
 from pathlib import Path
 
-from config import Config
+from app.config import Config
 
 def launch(wad, iwad, source_port):
     config = Config.Instance()
