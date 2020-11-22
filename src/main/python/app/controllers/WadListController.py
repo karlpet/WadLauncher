@@ -8,11 +8,14 @@ class WadListController:
     
     def show(self, root, models):
         self.wads = models.wads
-        self.view = WadListView(root, self.wads.all(), self.select_wad)
+        self.view = WadListView(root, self.wads)
+
+        self.wads.subscribe(self.wad_subscription)
     
-    def select_wad(self, index):
-        selected_wad = self.wads.all()[index]
-        
-        self.wads.select_wad(selected_wad['id'])
+    def wad_subscription(self, msg):
+        action, data = msg
+
+        if (action == 'CREATE_WAD'):
+            self.view.update_list(self.wads.find(data))
 
 sys.modules[__name__] = WadListController()
