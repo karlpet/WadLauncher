@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>900</width>
-    <height>561</height>
+    <width>894</width>
+    <height>480</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -50,15 +50,35 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="QTextBrowser" name="searchResult"/>
+           <widget class="QScrollArea" name="search_results_container">
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="lineWidth">
+             <number>0</number>
+            </property>
+            <property name="widgetResizable">
+             <bool>true</bool>
+            </property>
+            <widget class="QWidget" name="search_results">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>460</width>
+               <height>325</height>
+              </rect>
+             </property>
+            </widget>
+           </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <layout class="QHBoxLayout" name="search_layout">
             <property name="topMargin">
              <number>0</number>
             </property>
             <item>
-             <widget class="QLineEdit" name="lineEdit"/>
+             <widget class="QLineEdit" name="searchbar_input"/>
             </item>
             <item>
              <widget class="QComboBox" name="searchbar_type_selector"/>
@@ -101,6 +121,18 @@
             </size>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_3">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
             <item>
              <widget class="QLabel" name="doomworldLabel">
               <property name="text">
@@ -109,14 +141,14 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="random">
+             <widget class="QPushButton" name="random_widget_button">
               <property name="text">
                <string>Random</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="search">
+             <widget class="QPushButton" name="search_widget_button">
               <property name="text">
                <string>Search</string>
               </property>
@@ -199,7 +231,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>900</width>
+     <width>894</width>
      <height>25</height>
     </rect>
    </property>

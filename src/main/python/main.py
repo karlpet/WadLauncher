@@ -1,6 +1,6 @@
 import sys, os, subprocess
 
-from fbs_runtime.application_context.PyQt5 import ApplicationContext
+from app.utils.AppContext import *
 from PyQt5 import QtWidgets, uic
 
 from app.config import Config
@@ -16,7 +16,7 @@ class Ui(QtWidgets.QMainWindow):
         self.show()
 
 if __name__ == '__main__':
-    appctxt = ApplicationContext()
+    appctxt = AppContext.Instance()
     config = Config.Instance()
     window = Ui(appctxt)
 
