@@ -1,5 +1,5 @@
 from PyQt5 import QtWidgets, QtGui, QtCore, uic
-from app.utils.AppContext import *
+from app.AppContext import *
 from app.utils.DWApi import SEARCH_TYPES
 from core.utils.strings import strformat_size, strformat_percentage
 

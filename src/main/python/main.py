@@ -1,6 +1,6 @@
 import sys, os, subprocess
 
-from app.utils.AppContext import *
+from app.AppContext import *
 from PyQt5 import QtWidgets, uic
 
 from app.config import Config
