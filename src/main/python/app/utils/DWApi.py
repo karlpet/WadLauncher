@@ -35,7 +35,7 @@ def get(filepath):
 
     return result
 
-# type: filename, title, author, email, description, credits, editors, textfile
+SEARCH_TYPES = ['filename', 'title', 'author', 'email', 'description', 'credits', 'editors', 'textfile']
 def search(query, search_by='filename'):
     # search query demands at least 3 chars, and uses '_' as an 'any' type char
     # 'gd'.ljust(3, '_') -> 'gd_'

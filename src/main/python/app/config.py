@@ -7,6 +7,7 @@ from core.utils.decorators import Singleton
 
 DEFAULT_CONFIG = """
 [PATHS]
+BASE_PATH = ~/.wadlauncher
 WADS_PATH = ~/.wadlauncher/wads
 IWADS_PATH =
 
