@@ -1,7 +1,7 @@
 from PyQt5 import QtWidgets, QtGui, QtCore, uic
 from app.utils.AppContext import *
 from app.utils.DWApi import SEARCH_TYPES
-from core.utils.strings import strformat_size
+from core.utils.strings import strformat_size, strformat_percentage
 
 search_result_template_path = AppContext.Instance().get_resource('template/search_result_item.ui')
 Form, Base = uic.loadUiType(search_result_template_path)
@@ -11,7 +11,7 @@ class SearchResultWidget(Base, Form):
         super(self.__class__, self).__init__(parent)
 
         self.setupUi(self)
-    
+
     def setData(self, item, controller):
         self.controller = controller
 
@@ -27,14 +27,22 @@ class SearchResultWidget(Base, Form):
         self.downloadButton = self.findChild(QtWidgets.QPushButton, 'search_result_download')
         self.downloadButton.clicked.connect(self.download)
         self.enabled = True
-    
+
     def download(self):
         self.downloadButton.setEnabled(False)
         if self.enabled:
             self.enabled = False
-            self.downloadButton.setText('Downloading...')
-            self.controller.download(self.id)
+            self.controller.download(self.id, self.download_progress_handler, self.download_finished_handler)
+
+    def download_progress_handler(self, count, block_size, total_size):
+        percentage = strformat_percentage(count * block_size, total_size)
+        button_text = 'Downloading... ({})'.format(percentage)
+        self.downloadButton.setText(button_text)
+
+    def download_finished_handler(self, _):
         self.downloadButton.setText('Downloaded')
+
+        
 
 class SearchView:
     def __init__(self, root, controller):
