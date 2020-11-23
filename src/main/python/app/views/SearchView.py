@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets, QtGui, QtCore, uic
 from app.AppContext import *
-from app.utils.DWApi import SEARCH_TYPES
+from app.workers.DWApiWorker import SEARCH_TYPES
 from core.utils.strings import strformat_size, strformat_percentage
 
 search_result_template_path = AppContext.Instance().get_resource('template/search_result_item.ui')
@@ -21,7 +21,7 @@ class SearchResultWidget(Base, Form):
             if key == 'size':
                 label.setText(strformat_size(item.get(key)))
             else:
-                label.setText(item.get(key, 'unknown'))
+                label.setText(item.get(key) or 'unknown')
 
         self.id = item.get('id')
         self.downloadButton = self.findChild(QtWidgets.QPushButton, 'search_result_download')
@@ -54,7 +54,7 @@ class SearchView:
         self.search_results = root.findChild(QtWidgets.QWidget, 'search_results')
 
         self.layout = QtWidgets.QVBoxLayout()
-        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.setContentsMargins(9, 9, 9, 9)
         self.layout.setAlignment(QtCore.Qt.AlignTop)
         self.search_results.setLayout(self.layout)
 
@@ -68,7 +68,16 @@ class SearchView:
             # remove it from the gui
             widgetToRemove.setParent(None)
 
-        for item in result:
+        search_result = result.get('file', [])
+        if type(search_result) != list:
+            search_result = [search_result]
+
+        warning = result.get('warning', None)
+        if warning:
+            self.layout.addWidget(QtWidgets.QLabel(warning['type']))
+            self.layout.addWidget(QtWidgets.QLabel(warning['message']))
+
+        for item in search_result:
             search_result = SearchResultWidget()
             search_result.setData(item, self.controller)
             self.layout.addWidget(search_result)
