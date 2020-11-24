@@ -29,12 +29,12 @@ class IdgamesDetailController:
 
         self.view.setData(result)
 
-    def download(self, id, progress_handler=None, download_handler=None):
+    def download(self, id, mirror, progress_handler=None, download_handler=None):
         data = next((x for x in self.search_result if x['id'] == id), None)
         if data == None:
             return
 
-        worker = DownloadWorker(data)
+        worker = DownloadWorker(data, mirror)
         worker.start()
         worker.progress.connect(progress_handler)
         if download_finished:

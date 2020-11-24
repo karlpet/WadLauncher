@@ -19,13 +19,13 @@ class DownloadWorker(QThread):
     progress = pyqtSignal(int, int, int)
     downloaded = pyqtSignal(str)
 
-    def __init__(self, item):
+    def __init__(self, item, mirror='GERMANY'):
         super(DownloadWorker, self).__init__()
 
         config = Config.Instance()
         base_path = os.path.expanduser(config['PATHS']['BASE_PATH'])
 
-        mirror_url = MIRRORS['GERMANY']
+        mirror_url = MIRRORS[mirror]
         dirname = item['dir']
         filename = item['filename']
 
