@@ -21,7 +21,7 @@ class WadListViewModel(QtCore.QAbstractListModel):
 
 class WadListView:
     def __init__(self, root, wads):
-        self.wad_list = root.findChild(QtWidgets.QListView, 'WadList')
+        self.wad_list = root.findChild(QtWidgets.QListView, 'wad_list')
         self.wads = wads
 
         self.wad_list.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)

@@ -6,7 +6,7 @@ class IdgamesDetailView():
     def __init__(self, root, controller):
         self.controller = controller
         self.root = root
-        root.findChild(QtWidgets.QStackedWidget, 'MainContentStack').currentChanged.connect(self.controller.get_data)
+        root.findChild(QtWidgets.QStackedWidget, 'main_stack').currentChanged.connect(self.controller.get_data)
         
         self.mirror_button_group = QtWidgets.QButtonGroup()
         button_layout = self.root.findChild(QtWidgets.QVBoxLayout, 'idgames_detail_download_layout')

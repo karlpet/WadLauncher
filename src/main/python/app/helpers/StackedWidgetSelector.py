@@ -7,5 +7,5 @@ class WidgetIndices(enum.Enum):
     IDGAMES_DETAIL = 1
 
 def display_widget(root, widget_index):
-    stackedWidget = root.findChild(QStackedWidget, 'MainContentStack')
+    stackedWidget = root.findChild(QStackedWidget, 'main_stack')
     stackedWidget.setCurrentIndex(widget_index.value)

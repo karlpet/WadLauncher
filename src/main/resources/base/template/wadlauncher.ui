@@ -30,7 +30,7 @@
        <number>9</number>
       </property>
       <item>
-       <widget class="QListView" name="WadList">
+       <widget class="QListView" name="wad_list">
         <property name="maximumSize">
          <size>
           <width>200</width>
@@ -40,11 +40,11 @@
        </widget>
       </item>
       <item>
-       <widget class="QStackedWidget" name="MainContentStack">
+       <widget class="QStackedWidget" name="main_stack">
         <property name="currentIndex">
          <number>0</number>
         </property>
-        <widget class="QWidget" name="idgamesSearch">
+        <widget class="QWidget" name="idgames_search">
          <property name="enabled">
           <bool>true</bool>
          </property>
@@ -62,7 +62,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="QScrollArea" name="search_results_container">
+           <widget class="QScrollArea" name="idgames_search_results_container">
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
             </property>
@@ -75,7 +75,7 @@
             <property name="widgetResizable">
              <bool>true</bool>
             </property>
-            <widget class="QWidget" name="search_results">
+            <widget class="QWidget" name="idgames_search_results">
              <property name="geometry">
               <rect>
                <x>0</x>
@@ -88,18 +88,18 @@
            </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="search_layout">
+           <layout class="QHBoxLayout" name="idgames_searchbar">
             <property name="topMargin">
              <number>0</number>
             </property>
             <item>
-             <widget class="QLineEdit" name="searchbar_input"/>
+             <widget class="QLineEdit" name="idgames_searchbar_input"/>
             </item>
             <item>
-             <widget class="QComboBox" name="searchbar_type_selector"/>
+             <widget class="QComboBox" name="idgames_searchbar_type_selector"/>
             </item>
             <item>
-             <widget class="QPushButton" name="searchbar_search">
+             <widget class="QPushButton" name="idgames_searchbar_search">
               <property name="text">
                <string>search</string>
               </property>
@@ -709,7 +709,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QWidget" name="SideBar" native="true">
+       <widget class="QWidget" name="sidebar" native="true">
         <property name="maximumSize">
          <size>
           <width>200</width>
@@ -733,7 +733,7 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QWidget" name="DoomWorldWidget" native="true">
+          <widget class="QWidget" name="sidebar_idgames" native="true">
            <property name="minimumSize">
             <size>
              <width>0</width>
@@ -754,21 +754,21 @@
              <number>0</number>
             </property>
             <item>
-             <widget class="QLabel" name="doomworldLabel">
+             <widget class="QLabel" name="sidebar_idgames_label">
               <property name="text">
                <string>idgames archive</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="random_widget_button">
+             <widget class="QPushButton" name="sidebar_idgames_random">
               <property name="text">
                <string>Random</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="search_widget_button">
+             <widget class="QPushButton" name="sidebar_idgames_search">
               <property name="text">
                <string>Search</string>
               </property>
@@ -778,14 +778,14 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="wadDirListLabel">
+          <widget class="QLabel" name="sidebar_dirlist_label">
            <property name="text">
             <string>Contents of directory</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QListView" name="WadDirList">
+          <widget class="QListView" name="sidebar_dirlist">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
              <horstretch>0</horstretch>
@@ -806,10 +806,10 @@
      </layout>
     </item>
     <item>
-     <widget class="QWidget" name="LaunchBar" native="true">
+     <widget class="QWidget" name="launchbar" native="true">
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QLabel" name="selectedWadName">
+        <widget class="QLabel" name="launchbar_selected_wad">
          <property name="text">
           <string/>
          </property>
@@ -829,13 +829,13 @@
         </spacer>
        </item>
        <item>
-        <widget class="QComboBox" name="iWadSelector"/>
+        <widget class="QComboBox" name="launchbar_iwad_selector"/>
        </item>
        <item>
-        <widget class="QComboBox" name="sourcePortSelector"/>
+        <widget class="QComboBox" name="launchbar_source_port_selector"/>
        </item>
        <item>
-        <widget class="QPushButton" name="launchWadButton">
+        <widget class="QPushButton" name="launchbar_launch_button">
          <property name="text">
           <string>Launch Wad</string>
          </property>
@@ -855,16 +855,16 @@
      <height>25</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuFile">
+   <widget class="QMenu" name="action_file">
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionImport_zip"/>
+    <addaction name="action_file_import_zip"/>
    </widget>
-   <addaction name="menuFile"/>
+   <addaction name="action_file"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionImport_zip">
+  <action name="action_file_import_zip">
    <property name="checkable">
     <bool>false</bool>
    </property>

@@ -16,10 +16,10 @@ class WadDirViewModel(QtCore.QAbstractListModel):
 
 class SidebarView:
     def __init__(self, root, controller):
-        self.wad_dir = root.findChild(QtWidgets.QListView, 'WadDirList')
-        self.searchButton = root.findChild(QtWidgets.QPushButton, 'search_widget_button')
+        self.wad_dir = root.findChild(QtWidgets.QListView, 'sidebar_dirlist')
+        self.searchButton = root.findChild(QtWidgets.QPushButton, 'sidebar_idgames_search')
         self.searchButton.clicked.connect(lambda _: display_widget(root, WidgetIndices.IDGAMES_SEARCH))
-        self.randomButton = root.findChild(QtWidgets.QPushButton, 'random_widget_button')
+        self.randomButton = root.findChild(QtWidgets.QPushButton, 'sidebar_idgames_random')
         self.randomButton.clicked.connect(controller.random_clicked)
 
     def show_dirs(self, dir_files):

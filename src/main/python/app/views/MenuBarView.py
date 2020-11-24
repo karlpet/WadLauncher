@@ -4,7 +4,7 @@ class MenuBarView:
     def __init__(self, root, controller):
         self.controller = controller
         self.root = root
-        self.import_zip_action = root.findChild(QtWidgets.QAction, 'actionImport_zip')
+        self.import_zip_action = root.findChild(QtWidgets.QAction, 'action_file_import_zip')
         self.import_zip_action.triggered.connect(self.file_dialog_opener)
 
     def file_dialog_opener(self):
