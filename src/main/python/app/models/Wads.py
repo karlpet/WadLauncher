@@ -3,6 +3,7 @@ import os, sys
 from core.base.Model import Model
 from app.config import Config
 from app.utils.Unzipper import unzip
+from app.workers.DWApiWorker import *
 
 config = Config.Instance()
 wads_path = os.path.expanduser(config['PATHS']['WADS_PATH'])
@@ -26,6 +27,7 @@ class Wads(Model):
         Model.__init__(self, loader=wad_loader)
         self.load()
         self.wad_dir_files = []
+        self.current_idgames_wad_id = None
 
     def select_wad(self, id):
         selected_wad = self.find(id)
@@ -41,6 +43,19 @@ class Wads(Model):
 
         id = self.create(**load_wad(new_wad_dir))
         self.broadcast(('CREATE_WAD', id))
+    
+    # TODO: This should be changed during metadata refactor. Wads should be responsible for both downloaded
+    # and not downloaded wads, and save accordingly.
+    def set_current_idgames_wad_id(self, current_idgames_wad_id):
+        self.current_idgames_wad_id = current_idgames_wad_id
+    
+    def get_current_idgames_wad_id(self):
+        return self.current_idgames_wad_id
+    
+    def get_random_wad(self):
+        worker = DWApiWorker(DWApiMethod.RANDOM)
+        worker.start()
+        worker.done.connect(lambda result: self.broadcast(('RANDOM_WAD', result)))
 
 
 sys.modules[__name__] = Wads()
