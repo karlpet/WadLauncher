@@ -27,11 +27,11 @@ class IdgamesDetailView():
             else:
                 label.setText(str(item.get(key)) or 'unknown')
 
-        self.id = item.get('id')
         self.progressbar = self.root.findChild(QtWidgets.QProgressBar, 'idgames_detail_progress')
         self.progressbar.hide()
         self.downloadButton = self.root.findChild(QtWidgets.QPushButton, 'idgames_detail_download_button')
         self.downloadButton.clicked.connect(self.download)
+        self.downloadButton.setEnabled(True)
         self.enabled = True
 
     def download(self):
@@ -43,7 +43,7 @@ class IdgamesDetailView():
             self.progressbar.setValue(0)
             self.downloadButton.setText('Downloading...')
             self.enabled = False
-            self.controller.download(self.id, self.mirror, self.download_progress_handler, self.download_finished_handler)
+            self.controller.download(mirror, self.download_progress_handler, self.download_finished_handler)
 
     def download_progress_handler(self, count, block_size, total_size):
         percentage = min((count * block_size) / total_size * 100, 100)

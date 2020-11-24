@@ -3,6 +3,7 @@ import os, sys
 from core.base.Model import Model
 from app.config import Config
 from app.utils.Unzipper import unzip
+from app.workers.DWApiWorker import *
 
 config = Config.Instance()
 wads_path = os.path.expanduser(config['PATHS']['WADS_PATH'])
@@ -50,5 +51,11 @@ class Wads(Model):
     
     def get_current_idgames_wad_id(self):
         return self.current_idgames_wad_id
+    
+    def get_random_wad(self):
+        worker = DWApiWorker(DWApiMethod.RANDOM)
+        worker.start()
+        worker.done.connect(lambda result: self.broadcast(('RANDOM_WAD', result)))
+
 
 sys.modules[__name__] = Wads()

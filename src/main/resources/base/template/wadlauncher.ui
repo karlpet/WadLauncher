@@ -42,7 +42,7 @@
       <item>
        <widget class="QStackedWidget" name="MainContentStack">
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="idgamesSearch">
          <property name="enabled">
@@ -288,6 +288,9 @@
                   <property name="text">
                    <string>TextLabel</string>
                   </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
                  </widget>
                 </item>
                 <item row="3" column="0">
@@ -325,6 +328,9 @@
                   <property name="text">
                    <string>TextLabel</string>
                   </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
                  </widget>
                 </item>
                 <item row="8" column="1">
@@ -342,6 +348,9 @@
                   </property>
                   <property name="text">
                    <string>TextLabel</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
@@ -383,6 +392,9 @@
                   <property name="text">
                    <string>TextLabel</string>
                   </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
                  </widget>
                 </item>
                 <item row="2" column="1">
@@ -400,6 +412,9 @@
                   </property>
                   <property name="text">
                    <string>TextLabel</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
@@ -419,6 +434,9 @@
                   <property name="text">
                    <string>TextLabel</string>
                   </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
                  </widget>
                 </item>
                 <item row="5" column="1">
@@ -435,7 +453,13 @@
                    </font>
                   </property>
                   <property name="text">
-                   <string>TextLabel</string>
+                   <string>Textlabel</string>
+                  </property>
+                  <property name="textFormat">
+                   <enum>Qt::RichText</enum>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
@@ -454,6 +478,9 @@
                   </property>
                   <property name="text">
                    <string>TextLabel</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
@@ -511,6 +538,9 @@
                   <property name="text">
                    <string>TextLabel</string>
                   </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
                  </widget>
                 </item>
                 <item row="3" column="1">
@@ -528,6 +558,9 @@
                   </property>
                   <property name="text">
                    <string>TextLabel</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
@@ -607,6 +640,9 @@
                   <property name="text">
                    <string>TextLabel</string>
                   </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
                  </widget>
                 </item>
                 <item row="11" column="0">
@@ -643,6 +679,9 @@
                   </property>
                   <property name="text">
                    <string>TextLabel</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
@@ -836,7 +875,4 @@
  </widget>
  <resources/>
  <connections/>
- <buttongroups>
-  <buttongroup name="idgames_detail_download_mirror_select"/>
- </buttongroups>
 </ui>

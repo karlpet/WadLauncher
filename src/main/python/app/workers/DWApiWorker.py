@@ -1,17 +1,17 @@
 # Doomworld idgames public api worker wrapper.
 # Documentation: https://www.doomworld.com/idgames/api/
-import requests, os, enum
+import requests, os, enum, re
 
 from PyQt5.QtCore import QThread, pyqtSignal
 
 SEARCH_TYPES = ['filename', 'title', 'author', 'email', 'description', 'credits', 'editors', 'textfile']
-BASE_URL = 'https://www.doomworld.com/idgames/api/api.php?{}&out=json'
 
 class DWApiMethod(enum.Enum):
     IS_ALIVE = 1
     SEARCH = 2
     ABOUT = 3
     GET = 4
+    RANDOM = 5
 
 class DWApiWorker(QThread):
     done = pyqtSignal(object)
@@ -44,7 +44,8 @@ class DWApiWorker(QThread):
         self.done.emit((result, err))
 
     def req(self, query):
-        response = requests.get(BASE_URL.format(query))
+        url = 'https://www.doomworld.com/idgames/api/api.php?{}&out=json'
+        response = requests.get(url.format(query))
         response.raise_for_status()
 
         result = response.json()
@@ -53,6 +54,7 @@ class DWApiWorker(QThread):
             result.pop('content')
             return {**content, **result}
 
+        response.close()
         return result
 
     def is_alive(self):
@@ -63,8 +65,9 @@ class DWApiWorker(QThread):
         result = self.req('action=about')
         return result
 
-    def get(self, filename, get_type):
-        result = self.req('action=get&{type}={file}'.format(type=get_type, file=filename))
+    # type = 'file' or 'id'
+    def get(self, key, get_type):
+        result = self.req('action=get&{type}={key}'.format(type=get_type, key=key))
         error = result.get('error', False)
 
         if error:
@@ -85,3 +88,17 @@ class DWApiWorker(QThread):
             raise Exception(error)
 
         return result
+    
+    def random(self):
+        url = 'https://www.doomworld.com/idgames/?random'
+
+        random_response = requests.get(url)
+        random_response.raise_for_status()
+
+        # parsing html with regex... lol.
+        # Its probably fine, since we are only looking for the idgamesprotocol attribute
+        idgamesprotocol = re.search('idgames:\/\/\d+', random_response.text)
+        idgames_id = idgamesprotocol.group().replace('idgames://', '')
+
+        random_response.close()
+        return self.get(idgames_id, 'id')

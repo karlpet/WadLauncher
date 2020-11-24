@@ -13,6 +13,15 @@ class IdgamesDetailController:
     def show(self, root, models):
         self.view = IdgamesDetailView.IdgamesDetailView(root, self)
         self.models = models
+        self.models.wads.subscribe(self.wads_listener)
+    
+    def wads_listener(self, args):
+        action, data = args
+
+        if action == 'RANDOM_WAD':
+            result, _ = data
+            self.data = result
+            self.view.setData(result)
     
     def get_data(self, widget_index):
         if widget_index != WidgetIndices.IDGAMES_DETAIL.value:
@@ -27,17 +36,17 @@ class IdgamesDetailController:
     def set_data(self, response):
         result, _ = response
 
+        self.data = result
         self.view.setData(result)
 
-    def download(self, id, mirror, progress_handler=None, download_handler=None):
-        data = next((x for x in self.search_result if x['id'] == id), None)
-        if data == None:
+    def download(self, mirror, progress_handler=None, download_handler=None):
+        if self.data == None:
             return
 
-        worker = DownloadWorker(data, mirror)
+        worker = DownloadWorker(self.data, mirror)
         worker.start()
         worker.progress.connect(progress_handler)
-        if download_finished:
+        if download_handler:
             worker.downloaded.connect(download_handler)
         worker.downloaded.connect(self.download_done)
 
