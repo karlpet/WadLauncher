@@ -15,7 +15,7 @@ class IdgamesDetailView():
             radio_button = QtWidgets.QRadioButton(label)
             radio_button.setObjectName(label.upper())
             radio_button.setChecked(i == 0)
-            button_layout.addWidget(radio_button)
+            button_layout.insertWidget(1 + i, radio_button)
             self.mirror_button_group.addButton(radio_button)
 
     def setData(self, item):
