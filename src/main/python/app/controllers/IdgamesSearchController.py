@@ -1,17 +1,17 @@
 import sys
 
-from app.views import SearchView
+from app.views.IdgamesSearchView import IdgamesSearchView
 
 from app.workers.DWApiWorker import *
 from app.workers.DownloadWorker import *
 from app.helpers.StackedWidgetSelector import *
 
-class SearchController:
+class IdgamesSearchController:
     def __init__(self):
         pass
     
     def show(self, root, models):
-        self.view = SearchView.SearchView(root, self)
+        self.view = IdgamesSearchView(root, self)
         self.models = models
         self.root = root
     
@@ -46,4 +46,4 @@ class SearchController:
     def download_done(self, filepath):
         self.models.wads.unzip_import_wad(filepath)
 
-sys.modules[__name__] = SearchController()
+sys.modules[__name__] = IdgamesSearchController()

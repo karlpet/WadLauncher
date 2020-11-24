@@ -1,10 +1,13 @@
 import sys, os, subprocess
 
-from app.AppContext import *
 from PyQt5 import QtWidgets, uic
 
-from app.config import Config
 from core.utils.mvcimporter import *
+
+from app.AppContext import *
+from app.config import Config
+from app.helpers.StackedWidgetSelector import *
+
 
 class Ui(QtWidgets.QMainWindow):
     def __init__(self, appctxt):
@@ -21,6 +24,8 @@ if __name__ == '__main__':
     window = Ui(appctxt)
 
     models, controllers = mvcimport(os.path.dirname(os.path.abspath(__file__)), window)
+
+    display_widget(window, WidgetIndices.IDGAMES_SEARCH)
 
     exit_code = appctxt.app.exec_()
     sys.exit(exit_code)

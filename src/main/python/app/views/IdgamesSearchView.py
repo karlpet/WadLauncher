@@ -27,18 +27,18 @@ class SearchResultWidget(Base, Form):
         self.id = item.get('id')
         self.progressbar = self.findChild(QtWidgets.QProgressBar, 'search_result_progress')
         self.progressbar.hide()
-        self.downloadButton = self.findChild(QtWidgets.QPushButton, 'search_result_download')
-        self.downloadButton.clicked.connect(self.download)
+        self.download_button = self.findChild(QtWidgets.QPushButton, 'search_result_download')
+        self.download_button.clicked.connect(self.download)
         self.enabled = True
         self.view_details_button = self.findChild(QtWidgets.QPushButton, 'search_result_details')
         self.view_details_button.clicked.connect(lambda _: self.controller.display_detail(self.id))
 
     def download(self):
-        self.downloadButton.setEnabled(False)
+        self.download_button.setEnabled(False)
         if self.enabled:
             self.progressbar.show()
             self.progressbar.setValue(0)
-            self.downloadButton.setText('Downloading...')
+            self.download_button.setText('Downloading...')
             self.enabled = False
             self.controller.download(self.id, self.download_progress_handler, self.download_finished_handler)
 
@@ -48,20 +48,20 @@ class SearchResultWidget(Base, Form):
         
 
     def download_finished_handler(self, _):
-        self.downloadButton.setText('Downloaded')
+        self.download_button.setText('Downloaded')
         self.progressbar.hide()
 
         
 
-class SearchView:
+class IdgamesSearchView:
     def __init__(self, root, controller):
         self.searchbar = SearchBar(root, controller)
         self.controller = controller
         self.root = root
 
-        self.search_results_container = root.findChild(QtWidgets.QScrollArea, 'search_results_container')
+        self.search_results_container = root.findChild(QtWidgets.QScrollArea, 'idgames_search_results_container')
         self.search_results_container.setWidgetResizable(True)
-        self.search_results = root.findChild(QtWidgets.QWidget, 'search_results')
+        self.search_results = root.findChild(QtWidgets.QWidget, 'idgames_search_results')
 
         self.layout = QtWidgets.QVBoxLayout()
         self.layout.setContentsMargins(9, 9, 9, 9)
@@ -96,9 +96,9 @@ class SearchBar:
     def __init__(self, root, controller):
         self.controller = controller
 
-        self.searchbar_search = root.findChild(QtWidgets.QPushButton, 'searchbar_search')
-        self.searchbar_type_selector = root.findChild(QtWidgets.QComboBox, 'searchbar_type_selector')
-        self.searchbar_input = root.findChild(QtWidgets.QLineEdit, 'searchbar_input')
+        self.searchbar_search = root.findChild(QtWidgets.QPushButton, 'idgames_searchbar_search')
+        self.searchbar_type_selector = root.findChild(QtWidgets.QComboBox, 'idgames_searchbar_type_selector')
+        self.searchbar_input = root.findChild(QtWidgets.QLineEdit, 'idgames_searchbar_input')
 
         self.searchbar_search.clicked.connect(self.search)
         self.searchbar_type_selector.setModel(SearchTypeComboBoxModel(SEARCH_TYPES))
