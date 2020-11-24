@@ -1,18 +1,18 @@
 import sys
 
-from app.views.WadDirView import WadDirView
+from app.views.SidebarView import SidebarView
 
-class WadDirController:
+class SidebarController:
     def __init__(self):
         pass
 
     def show(self, root, models):
         self.wads = models.wads
-        self.view = WadDirView(root)
+        self.view = SidebarView(root)
 
-        self.wads.subscribe(self.select_wad_listener)
+        self.wads.subscribe(self.wad_listener)
     
-    def select_wad_listener(self, args):
+    def wad_listener(self, args):
         action, _ = args
 
         if action == 'SELECT_WAD':
@@ -20,4 +20,4 @@ class WadDirController:
 
             self.view.show_dirs(dir_files)
 
-sys.modules[__name__] = WadDirController()
+sys.modules[__name__] = SidebarController()

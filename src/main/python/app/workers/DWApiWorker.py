@@ -63,10 +63,8 @@ class DWApiWorker(QThread):
         result = self.req('action=about')
         return result
 
-    def get(self, filepath):
-        _, file = os.path.split(filepath)
-
-        result = self.req('action=get&file={}'.format(file))
+    def get(self, filename, get_type):
+        result = self.req('action=get&{type}={file}'.format(type=get_type, file=filename))
         error = result.get('error', False)
 
         if error:

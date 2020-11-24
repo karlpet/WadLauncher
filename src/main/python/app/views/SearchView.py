@@ -1,7 +1,8 @@
 from PyQt5 import QtWidgets, QtGui, QtCore, uic
 from app.AppContext import *
 from app.workers.DWApiWorker import SEARCH_TYPES
-from core.utils.strings import strformat_size, strformat_percentage
+
+from core.utils.strings import strformat_size
 
 search_result_template_path = AppContext.Instance().get_resource('template/search_result_item.ui')
 Form, Base = uic.loadUiType(search_result_template_path)
@@ -12,7 +13,7 @@ class SearchResultWidget(Base, Form):
 
         self.setupUi(self)
 
-    def setData(self, item, controller):
+    def setData(self, root, item, controller):
         self.controller = controller
 
         data_labels = ['author', 'size', 'date', 'filename', 'title', 'description']
@@ -24,23 +25,31 @@ class SearchResultWidget(Base, Form):
                 label.setText(item.get(key) or 'unknown')
 
         self.id = item.get('id')
+        self.progressbar = self.findChild(QtWidgets.QProgressBar, 'search_result_progress')
+        self.progressbar.hide()
         self.downloadButton = self.findChild(QtWidgets.QPushButton, 'search_result_download')
         self.downloadButton.clicked.connect(self.download)
         self.enabled = True
+        self.view_details_button = self.findChild(QtWidgets.QPushButton, 'search_result_details')
+        self.view_details_button.clicked.connect(lambda _: self.controller.display_detail(self.id))
 
     def download(self):
         self.downloadButton.setEnabled(False)
         if self.enabled:
+            self.progressbar.show()
+            self.progressbar.setValue(0)
+            self.downloadButton.setText('Downloading...')
             self.enabled = False
             self.controller.download(self.id, self.download_progress_handler, self.download_finished_handler)
 
     def download_progress_handler(self, count, block_size, total_size):
-        percentage = strformat_percentage(count * block_size, total_size)
-        button_text = 'Downloading... ({})'.format(percentage)
-        self.downloadButton.setText(button_text)
+        percentage = min((count * block_size) / total_size * 100, 100)
+        self.progressbar.setValue(percentage)
+        
 
     def download_finished_handler(self, _):
         self.downloadButton.setText('Downloaded')
+        self.progressbar.hide()
 
         
 
@@ -48,6 +57,7 @@ class SearchView:
     def __init__(self, root, controller):
         self.searchbar = SearchBar(root, controller)
         self.controller = controller
+        self.root = root
 
         self.search_results_container = root.findChild(QtWidgets.QScrollArea, 'search_results_container')
         self.search_results_container.setWidgetResizable(True)
@@ -79,7 +89,7 @@ class SearchView:
 
         for item in search_result:
             search_result = SearchResultWidget()
-            search_result.setData(item, self.controller)
+            search_result.setData(self.root, item, self.controller)
             self.layout.addWidget(search_result)
 
 class SearchBar:
