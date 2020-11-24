@@ -27,18 +27,18 @@ class SearchResultWidget(Base, Form):
         self.id = item.get('id')
         self.progressbar = self.findChild(QtWidgets.QProgressBar, 'search_result_progress')
         self.progressbar.hide()
-        self.downloadButton = self.findChild(QtWidgets.QPushButton, 'search_result_download')
-        self.downloadButton.clicked.connect(self.download)
+        self.download_button = self.findChild(QtWidgets.QPushButton, 'search_result_download')
+        self.download_button.clicked.connect(self.download)
         self.enabled = True
         self.view_details_button = self.findChild(QtWidgets.QPushButton, 'search_result_details')
         self.view_details_button.clicked.connect(lambda _: self.controller.display_detail(self.id))
 
     def download(self):
-        self.downloadButton.setEnabled(False)
+        self.download_button.setEnabled(False)
         if self.enabled:
             self.progressbar.show()
             self.progressbar.setValue(0)
-            self.downloadButton.setText('Downloading...')
+            self.download_button.setText('Downloading...')
             self.enabled = False
             self.controller.download(self.id, self.download_progress_handler, self.download_finished_handler)
 
@@ -48,7 +48,7 @@ class SearchResultWidget(Base, Form):
         
 
     def download_finished_handler(self, _):
-        self.downloadButton.setText('Downloaded')
+        self.download_button.setText('Downloaded')
         self.progressbar.hide()
 
         

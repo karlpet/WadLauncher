@@ -29,19 +29,19 @@ class IdgamesDetailView():
 
         self.progressbar = self.root.findChild(QtWidgets.QProgressBar, 'idgames_detail_progress')
         self.progressbar.hide()
-        self.downloadButton = self.root.findChild(QtWidgets.QPushButton, 'idgames_detail_download_button')
-        self.downloadButton.clicked.connect(self.download)
-        self.downloadButton.setEnabled(True)
+        self.download_button = self.root.findChild(QtWidgets.QPushButton, 'idgames_detail_download_button')
+        self.download_button.clicked.connect(self.download)
+        self.download_button.setEnabled(True)
         self.enabled = True
 
     def download(self):
-        self.downloadButton.setEnabled(False)
+        self.download_button.setEnabled(False)
 
         if self.enabled:
             mirror = self.mirror_button_group.checkedButton().objectName()
             self.progressbar.show()
             self.progressbar.setValue(0)
-            self.downloadButton.setText('Downloading...')
+            self.download_button.setText('Downloading...')
             self.enabled = False
             self.controller.download(mirror, self.download_progress_handler, self.download_finished_handler)
 
