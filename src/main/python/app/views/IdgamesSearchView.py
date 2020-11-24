@@ -53,7 +53,7 @@ class SearchResultWidget(Base, Form):
 
         
 
-class SearchView:
+class IdgamesSearchView:
     def __init__(self, root, controller):
         self.searchbar = SearchBar(root, controller)
         self.controller = controller
