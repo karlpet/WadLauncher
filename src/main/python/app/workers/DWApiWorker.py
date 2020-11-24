@@ -9,36 +9,27 @@ BASE_URL = 'https://www.doomworld.com/idgames/api/api.php?{}&out=json'
 
 class DWApiMethod(enum.Enum):
     IS_ALIVE = 1
-    ABOUT = 2
-    GET = 3
-    SEARCH = 4
+    SEARCH = 2
+    ABOUT = 3
+    GET = 4
 
 class DWApiWorker(QThread):
-    error = pyqtSignal(str)
     done = pyqtSignal(object)
 
     def __init__(self, api_method, *api_args):
         super(DWApiWorker, self).__init__()
 
-        self.api_method = api_method
+        api_calls = dict((data, getattr(self, data.name.lower())) for data in DWApiMethod)
+
+        self.api_call = api_calls[api_method]
         self.api_args = api_args
 
     def run(self):
-        m = self.api_method
         result = None
         err = None
 
         try:
-            if m == DWApiMethod.IS_ALIVE:
-                result = self.is_alive(*self.api_args)
-            elif m == DWApiMethod.ABOUT:
-                result = self.about(*self.api_args)
-            elif m == DWApiMethod.GET:
-                result = self.get(*self.api_args)
-            elif m == DWApiMethod.SEARCH:
-                result = self.search(*self.api_args)
-            else:
-                raise Exception('Method not available, available methods: ' + str(list(DWApiMethod)))
+            result = self.api_call(*self.api_args)
         except Exception as e:
             err = e
         except requests.exceptions.HTTPError as e:
@@ -50,11 +41,7 @@ class DWApiWorker(QThread):
         except requests.exceptions.RequestException as e:
             err = e
 
-        if err:
-            self.error.emit(str(err))
-            return
-
-        self.done.emit(result)
+        self.done.emit((result, err))
 
     def req(self, query):
         response = requests.get(BASE_URL.format(query))

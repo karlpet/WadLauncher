@@ -68,11 +68,11 @@ class SearchView:
             # remove it from the gui
             widgetToRemove.setParent(None)
 
-        search_result = result.get('file', [])
+        search_result = result[0].get('file', [])
         if type(search_result) != list:
             search_result = [search_result]
 
-        warning = result.get('warning', None)
+        warning = result[0].get('warning', None)
         if warning:
             self.layout.addWidget(QtWidgets.QLabel(warning['type']))
             self.layout.addWidget(QtWidgets.QLabel(warning['message']))
