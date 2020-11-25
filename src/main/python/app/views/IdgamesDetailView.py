@@ -1,40 +1,30 @@
-from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QButtonGroup, QVBoxLayout, QRadioButton, QPlainTextEdit
 
 from core.utils.strings import str_filesize
+
+from app.views.widgets.IdgamesResponseWidget import *
 
 class IdgamesDetailView():
     def __init__(self, root, controller):
         self.controller = controller
         self.root = root
-        root.findChild(QtWidgets.QStackedWidget, 'main_stack').currentChanged.connect(self.controller.get_data)
-        
-        self.mirror_button_group = QtWidgets.QButtonGroup()
-        button_layout = self.root.findChild(QtWidgets.QVBoxLayout, 'idgames_detail_download_layout')
+
+        self.mirror_button_group = QButtonGroup()
+        button_layout = self.root.findChild(QVBoxLayout, 'idgames_detail_download_layout')
         radio_button_labels = ['Germany','Idaho','Greece','Greece (HTTP)','Texas','Germany (TLS)','New York','Virginia']
         for i, label in enumerate(radio_button_labels):
-            radio_button = QtWidgets.QRadioButton(label)
+            radio_button = QRadioButton(label)
             radio_button.setObjectName(label.upper())
             radio_button.setChecked(i == 0)
             button_layout.insertWidget(1 + i, radio_button)
             self.mirror_button_group.addButton(radio_button)
 
-    def setData(self, item):
         data_labels = ['title', 'filename', 'size', 'date', 'author', 'description', 'credits', 'base', 'buildtime', 'editors', 'bugs','rating']
-        for key in data_labels:
-            label = self.root.findChild(QtWidgets.QLabel, 'idgames_detail_info_' + key)
-            if key == 'size':
-                label.setText(str_filesize(item.get(key)))
-            else:
-                label.setText(str(item.get(key)) or 'unknown')
+        self.idgames_response_widget = IdgamesResponseWidget(root, data_labels, 'idgames_detail', self.download, data_labels)
 
-        self.progressbar = self.root.findChild(QtWidgets.QProgressBar, 'idgames_detail_progress')
-        self.progressbar.hide()
-        self.download_button = self.root.findChild(QtWidgets.QPushButton, 'idgames_detail_download_button')
-        self.download_button.clicked.connect(self.download)
-        self.download_button.setEnabled(True)
-        self.download_button.setText('Download')
-        self.enabled = True
-        self.textfile = self.root.findChild(QtWidgets.QPlainTextEdit, 'idgames_detail_textfile')
+    def set_data(self, item):
+        self.idgames_response_widget.set_data(item)
+        self.textfile = self.root.findChild(QPlainTextEdit, 'idgames_detail_textfile')
 
         if item.get('textfile'):
             self.textfile.setPlainText(item['textfile'])
@@ -42,22 +32,7 @@ class IdgamesDetailView():
         else:
             self.textfile.hide()
 
-    def download(self):
-        self.download_button.setEnabled(False)
 
-        if self.enabled:
-            mirror = self.mirror_button_group.checkedButton().objectName()
-            self.progressbar.show()
-            self.progressbar.setValue(0)
-            self.download_button.setText('Downloading...')
-            self.enabled = False
-            self.controller.download(mirror, self.download_progress_handler, self.download_finished_handler)
-
-    def download_progress_handler(self, count, block_size, total_size):
-        percentage = min((count * block_size) / total_size * 100, 100)
-        self.progressbar.setValue(percentage)
-        
-
-    def download_finished_handler(self, _):
-        self.download_button.setText('Downloaded')
-        self.progressbar.hide()
+    def download(self, id, download_progress_handler, download_finished_handler):
+        mirror = self.mirror_button_group.checkedButton().objectName()
+        self.controller.download(mirror, download_progress_handler, download_finished_handler)
