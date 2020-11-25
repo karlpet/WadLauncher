@@ -1,8 +1,9 @@
 import pathlib, os, urllib
 
-from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt5.QtCore import QThread, pyqtSignal, QThreadPool
 
 from app.config import Config
+from app.workers.WorkerPool import *
 
 MIRRORS = {
     'GERMANY': 'ftp://ftp.fu-berlin.de/pc/games/idgames/',
@@ -17,20 +18,19 @@ MIRRORS = {
 
 def download_worker_wrapper(item, progress_handlers=[], download_handlers=[], mirror='GERMANY'):
     worker = DownloadWorker(item, mirror)
-    worker.start()
     for handler in progress_handlers:
-        worker.progress.connect(handler)
+        worker.downloading.connect(handler)
     for handler in download_handlers:
         worker.downloaded.connect(handler)
 
-    return worker
+    WorkerPool.Instance().start(worker)
 
 class DownloadWorker(QThread):
-    progress = pyqtSignal(int, int, int)
+    downloading = pyqtSignal(int, int, int)
     downloaded = pyqtSignal(str)
 
-    def __init__(self, item, mirror='GERMANY'):
-        super(DownloadWorker, self).__init__()
+    def __init__(self, item, mirror='GERMANY', parent=None):
+        QThread.__init__(self, parent)
 
         config = Config.Instance()
         base_path = os.path.expanduser(config['PATHS']['BASE_PATH'])
@@ -50,4 +50,4 @@ class DownloadWorker(QThread):
         self.downloaded.emit(file_path)
 
     def progress_handler(self, count, block_size, total_size):
-        self.progress.emit(count, block_size, total_size)
+        self.downloading.emit(count, block_size, total_size)

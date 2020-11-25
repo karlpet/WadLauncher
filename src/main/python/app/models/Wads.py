@@ -12,10 +12,15 @@ wads_path = os.path.expanduser(config['PATHS']['WADS_PATH'])
 extensions = ['.wad', '.WAD', '.pk3', '.PK3']
 
 def load_wad(dir):
-    for file in os.listdir(dir):
+    dir_contents = [file for file in os.listdir(dir)]
+    if 'metadata.json' in dir_contents:
+        with open(os.path.join(dir, 'metadata.json'), 'r') as json_file:
+            return json.load(json_file)
+
+    for file in dir_contents:
         if any((file.endswith(ext) for ext in extensions)):
             return { 'name': os.path.basename(dir), 'file': file, 'path': dir }
-    
+
     return { 'name': 'ERROR, no wad found!', 'file': '' }
 
 def wad_loader():
@@ -59,19 +64,19 @@ class Wads(Model):
             lambda _: self.broadcast(('DOWNLOAD_FINISHED', id)),
             lambda file_path: self.unzip_import_wad(file_path, item)
         ]
-        worker = download_worker_wrapper(item, progress_handlers, download_handlers, mirror)
+        download_worker_wrapper(item, progress_handlers, download_handlers, mirror)
 
     def idgames_random(self):
         handlers = [lambda result: self.broadcast(('RANDOM_WAD', result))]
-        worker = api_worker_wrapper(DWApiMethod.RANDOM, handlers)
+        api_worker_wrapper(DWApiMethod.RANDOM, handlers)
     
     def idgames_get(self, wad_id):
         handlers = [lambda result: self.broadcast(('DETAIL_WAD', result))]
-        worker = api_worker_wrapper(DWApiMethod.GET, handlers, wad_id, 'id')    
+        api_worker_wrapper(DWApiMethod.GET, handlers, wad_id, 'id')    
     
     def idgames_search(self, text, search_by):
         handlers = [lambda result: self.broadcast(('SEARCH_WADS', result))]
-        worker = api_worker_wrapper(DWApiMethod.SEARCH, handlers, text, search_by)
+        api_worker_wrapper(DWApiMethod.SEARCH, handlers, text, search_by)
 
 
 sys.modules[__name__] = Wads()

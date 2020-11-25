@@ -32,6 +32,8 @@ class IdgamesResponseWidget:
         self.download_button.clicked.connect(self.download)
         self.download_button.setText('Download')
         self.enabled = True
+        self.download_button.setEnabled(True)
+
 
     def download(self):
         self.download_button.setEnabled(False)
