@@ -25,7 +25,7 @@ if __name__ == '__main__':
 
     models, controllers = mvcimport(os.path.dirname(os.path.abspath(__file__)), window)
 
-    display_widget(window, WidgetIndices.IDGAMES_SEARCH)
+    display_widget(window, WidgetIndices.WELCOME)
 
     exit_code = appctxt.app.exec_()
     sys.exit(exit_code)
