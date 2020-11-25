@@ -1,6 +1,6 @@
 import sys
 
-from app.views import IdgamesDetailView
+from app.views.IdgamesDetailView import IdgamesDetailView
 
 from app.workers.DWApiWorker import *
 from app.workers.DownloadWorker import *
@@ -13,7 +13,7 @@ class IdgamesDetailController:
     def show(self, root, models):
         self.root = root
         self.models = models
-        self.view = IdgamesDetailView.IdgamesDetailView(root, self)
+        self.view = IdgamesDetailView(root, self)
         self.models.wads.subscribe(self.wads_listener)
     
     def wads_listener(self, args):
