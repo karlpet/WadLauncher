@@ -1,28 +1,5 @@
 from PyQt5 import QtWidgets, QtCore
-
-class SourcePortComboBoxModel(QtCore.QAbstractListModel):
-    def __init__(self, source_ports = [], parent=None):
-        QtCore.QAbstractListModel.__init__(self, parent)
-        self.__source_ports = source_ports
-
-    def rowCount(self, parent):
-        return len(self.__source_ports)
-    
-    def data(self, index, role):
-        if role == QtCore.Qt.DisplayRole:
-            return self.__source_ports[index.row()].get('name')
-
-class IwadComboBoxModel(QtCore.QAbstractListModel):
-    def __init__(self, iwads = [], parent=None):
-        QtCore.QAbstractListModel.__init__(self, parent)
-        self.__iwads = iwads
-
-    def rowCount(self, parent):
-        return len(self.__iwads)
-    
-    def data(self, index, role):
-        if role == QtCore.Qt.DisplayRole:
-            return self.__iwads[index.row()].get('name')
+from app.views.viewmodels.ComboBoxModel import *
 
 class LaunchBarView:
     def __init__(self,
@@ -38,13 +15,13 @@ class LaunchBarView:
         self.selected_wad_name.setText('No wad selected')
 
         iwad_selector = root.findChild(QtWidgets.QComboBox, 'launchbar_iwad_selector')
-        iwad_selector.setModel(IwadComboBoxModel(iwads))
+        iwad_selector.setModel(ComboBoxModel(iwads, 'name'))
         iwad_selector.currentIndexChanged.connect(select_iwad)
         iwad_selector.setCurrentIndex(iwad_selector.findText('doom2.wad'))
         select_iwad(iwad_selector.currentIndex())
 
         source_port_selector = root.findChild(QtWidgets.QComboBox, 'launchbar_source_port_selector')
-        source_port_selector.setModel(SourcePortComboBoxModel(source_ports))
+        source_port_selector.setModel(ComboBoxModel(source_ports, 'name'))
         source_port_selector.currentIndexChanged.connect(select_source_port)
         source_port_selector.setCurrentIndex(source_port_selector.findText('gzdoom'))
         select_source_port(source_port_selector.currentIndex())

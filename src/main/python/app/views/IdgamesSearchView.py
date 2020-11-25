@@ -1,4 +1,6 @@
 from PyQt5 import QtWidgets, QtGui, QtCore, uic
+
+from app.views.viewmodels.ComboBoxModel import *
 from app.AppContext import *
 from app.workers.DWApiWorker import SEARCH_TYPES
 
@@ -108,8 +110,8 @@ class SearchBar:
         self.searchbar_input = root.findChild(QtWidgets.QLineEdit, 'idgames_searchbar_input')
 
         self.searchbar_search.clicked.connect(self.search)
-        self.searchbar_type_selector.setModel(SearchTypeComboBoxModel(SEARCH_TYPES))
-    
+        self.searchbar_type_selector.setModel(ComboBoxModel(SEARCH_TYPES))
+
     def search(self):
         text = self.searchbar_input.text()
 
@@ -119,15 +121,3 @@ class SearchBar:
         search_selector_index = self.searchbar_type_selector.currentIndex()
         search_by = SEARCH_TYPES[search_selector_index]
         self.controller.search(text, search_by)
-
-class SearchTypeComboBoxModel(QtCore.QAbstractListModel):
-    def __init__(self, search_types = [], parent=None):
-        QtCore.QAbstractListModel.__init__(self, parent)
-        self.__search_types = search_types
-
-    def rowCount(self, parent):
-        return len(self.__search_types)
-    
-    def data(self, index, role):
-        if role == QtCore.Qt.DisplayRole:
-            return self.__search_types[index.row()]
