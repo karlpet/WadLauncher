@@ -51,5 +51,5 @@ class IdgamesDetailView():
         
 
     def download_finished_handler(self, _):
-        self.downloadButton.setText('Downloaded')
+        self.download_button.setText('Downloaded')
         self.progressbar.hide()
