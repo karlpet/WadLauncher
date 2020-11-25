@@ -21,7 +21,7 @@ class IdgamesDetailController:
         if action == 'RANDOM_WAD':
             result, _ = data
             self.data = result
-            self.view.setData(result)
+            self.view.set_data(result)
     
     def get_data(self, widget_index):
         if widget_index != WidgetIndices.IDGAMES_DETAIL.value:
@@ -37,7 +37,7 @@ class IdgamesDetailController:
         result, _ = response
 
         self.data = result
-        self.view.setData(result)
+        self.view.set_data(result)
 
     def download(self, mirror, progress_handler=None, download_handler=None):
         if self.data == None:

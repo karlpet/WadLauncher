@@ -8,6 +8,7 @@ def snake_casify(str):
 # input: integer size in bytes (B)
 # return: string formatted size with appropriate B, KB or MB
 def str_filesize(b_int):
+    b_int = int(b_int)
     if b_int < 1024:
         return '{0:.2f}B'.format(b_int)
     kb_float = b_int / 1024.0

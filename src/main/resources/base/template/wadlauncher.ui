@@ -80,8 +80,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>612</width>
-               <height>597</height>
+               <width>98</width>
+               <height>28</height>
               </rect>
              </property>
             </widget>
@@ -160,7 +160,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="idgames_detail_download_button">
+                 <widget class="QPushButton" name="idgames_detail_download">
                   <property name="text">
                    <string>Download</string>
                   </property>
@@ -273,7 +273,7 @@
                  </widget>
                 </item>
                 <item row="1" column="1">
-                 <widget class="QLabel" name="idgames_detail_info_filename">
+                 <widget class="QLabel" name="idgames_detail_filename">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                     <horstretch>0</horstretch>
@@ -313,7 +313,7 @@
                  </widget>
                 </item>
                 <item row="7" column="1">
-                 <widget class="QLabel" name="idgames_detail_info_base">
+                 <widget class="QLabel" name="idgames_detail_base">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                     <horstretch>0</horstretch>
@@ -334,7 +334,7 @@
                  </widget>
                 </item>
                 <item row="8" column="1">
-                 <widget class="QLabel" name="idgames_detail_info_buildtime">
+                 <widget class="QLabel" name="idgames_detail_buildtime">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                     <horstretch>0</horstretch>
@@ -374,7 +374,7 @@
                  </widget>
                 </item>
                 <item row="0" column="1">
-                 <widget class="QLabel" name="idgames_detail_info_title">
+                 <widget class="QLabel" name="idgames_detail_title">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                     <horstretch>0</horstretch>
@@ -398,7 +398,7 @@
                  </widget>
                 </item>
                 <item row="2" column="1">
-                 <widget class="QLabel" name="idgames_detail_info_size">
+                 <widget class="QLabel" name="idgames_detail_size">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                     <horstretch>0</horstretch>
@@ -419,7 +419,7 @@
                  </widget>
                 </item>
                 <item row="6" column="1">
-                 <widget class="QLabel" name="idgames_detail_info_credits">
+                 <widget class="QLabel" name="idgames_detail_credits">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                     <horstretch>0</horstretch>
@@ -440,7 +440,7 @@
                  </widget>
                 </item>
                 <item row="5" column="1">
-                 <widget class="QLabel" name="idgames_detail_info_description">
+                 <widget class="QLabel" name="idgames_detail_description">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                     <horstretch>0</horstretch>
@@ -464,7 +464,7 @@
                  </widget>
                 </item>
                 <item row="4" column="1">
-                 <widget class="QLabel" name="idgames_detail_info_author">
+                 <widget class="QLabel" name="idgames_detail_author">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                     <horstretch>0</horstretch>
@@ -523,7 +523,7 @@
                  </widget>
                 </item>
                 <item row="10" column="1">
-                 <widget class="QLabel" name="idgames_detail_info_bugs">
+                 <widget class="QLabel" name="idgames_detail_bugs">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                     <horstretch>0</horstretch>
@@ -544,7 +544,7 @@
                  </widget>
                 </item>
                 <item row="3" column="1">
-                 <widget class="QLabel" name="idgames_detail_info_date">
+                 <widget class="QLabel" name="idgames_detail_date">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                     <horstretch>0</horstretch>
@@ -625,7 +625,7 @@
                  </widget>
                 </item>
                 <item row="9" column="1">
-                 <widget class="QLabel" name="idgames_detail_info_editors">
+                 <widget class="QLabel" name="idgames_detail_editors">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                     <horstretch>0</horstretch>
@@ -665,7 +665,7 @@
                  </widget>
                 </item>
                 <item row="11" column="1">
-                 <widget class="QLabel" name="idgames_detail_info_rating">
+                 <widget class="QLabel" name="idgames_detail_rating">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                     <horstretch>0</horstretch>
