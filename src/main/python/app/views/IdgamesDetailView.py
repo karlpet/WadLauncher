@@ -32,7 +32,15 @@ class IdgamesDetailView():
         self.download_button = self.root.findChild(QtWidgets.QPushButton, 'idgames_detail_download_button')
         self.download_button.clicked.connect(self.download)
         self.download_button.setEnabled(True)
+        self.download_button.setText('Download')
         self.enabled = True
+        self.textfile = self.root.findChild(QtWidgets.QPlainTextEdit, 'idgames_detail_textfile')
+
+        if item.get('textfile'):
+            self.textfile.setPlainText(item['textfile'])
+            self.textfile.show()
+        else:
+            self.textfile.hide()
 
     def download(self):
         self.download_button.setEnabled(False)
