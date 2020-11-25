@@ -22,7 +22,6 @@ def unzip(file_path):
 
     if (len(directory) == 1):
         nested_dir = os.path.join(p, directory[0])
-        print(nested_dir)
         for file in os.listdir(nested_dir):
             shutil.move(os.path.join(nested_dir, file), os.path.join(new_wad_path, file))
         shutil.rmtree(nested_dir)

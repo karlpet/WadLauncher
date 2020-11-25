@@ -10,8 +10,6 @@ wads_path = os.path.expanduser(config['PATHS']['WADS_PATH'])
 extensions = ['.wad', '.WAD', '.pk3', '.PK3']
 
 def load_wad(dir):
-    print(dir)
-
     for file in os.listdir(dir):
         if any((file.endswith(ext) for ext in extensions)):
             return { 'name': os.path.basename(dir), 'file': file, 'path': dir }
