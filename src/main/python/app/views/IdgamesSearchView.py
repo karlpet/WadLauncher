@@ -45,6 +45,8 @@ class IdgamesSearchView:
 
         self.layout.addWidget(QLabel('Search result will show here...'))
 
+        self.search_results_widgets = {}
+
     def updateResults(self, result):
         for i in reversed(range(self.layout.count())): 
             widgetToRemove = self.layout.itemAt(i).widget()
@@ -63,10 +65,12 @@ class IdgamesSearchView:
             self.layout.addWidget(QLabel(warning['type']))
             self.layout.addWidget(QLabel(warning['message']))
 
+        self.search_results_widgets = {}
         for item in search_result:
             search_result_widget = SearchResultWidget(self.controller)
             search_result_widget.set_data(item)
             self.layout.addWidget(search_result_widget)
+            self.search_results_widgets[item['id']] = search_result_widget
         
         self.layout.addStretch()
 

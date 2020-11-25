@@ -12,10 +12,10 @@ class IdgamesDetailController:
     
     def show(self, root, models):
         self.root = root
-        self.models = models
+        self.wads = models.wads
         self.view = IdgamesDetailView(root, self)
-        self.models.wads.subscribe(self.wads_listener)
-    
+        self.wads.subscribe(self.wads_listener)
+
     def wads_listener(self, args):
         action, data = args
 
@@ -24,19 +24,21 @@ class IdgamesDetailController:
             self.data = result
             self.view.set_data(result)
             display_widget(self.root, WidgetIndices.IDGAMES_DETAIL)
+        elif action == 'DOWNLOAD_PROGRESS':
+            id, progress = data
+            if id == self.view.idgames_response_widget.id:
+                self.view.idgames_response_widget.download_progress(*progress)
+        elif action == 'DOWNLOAD_FINISHED':
+            id = data
+            if id == self.view.idgames_response_widget.id:
+                self.view.idgames_response_widget.download_finished()
 
-    def download(self, mirror, progress_handler=None, download_handler=None):
+    def download(self, id, mirror):
         if self.data == None:
             return
+        if id != self.data['id']:
+            return
 
-        worker = DownloadWorker(self.data, mirror)
-        worker.start()
-        worker.progress.connect(progress_handler)
-        if download_handler:
-            worker.downloaded.connect(download_handler)
-        worker.downloaded.connect(self.download_done)
-
-    def download_done(self, filepath):
-        self.models.wads.unzip_import_wad(filepath)
+        self.wads.idgames_download(self.data, mirror)
 
 sys.modules[__name__] = IdgamesDetailController()

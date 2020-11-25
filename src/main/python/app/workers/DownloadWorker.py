@@ -15,7 +15,7 @@ MIRRORS = {
     'VIRGINIA': 'http://www.gamers.org/pub/idgames/'
 }
 
-def download_worker_wrapper(item, progress_handlers=[], download_handlers=[], mirror=None):
+def download_worker_wrapper(item, progress_handlers=[], download_handlers=[], mirror='GERMANY'):
     worker = DownloadWorker(item, mirror)
     worker.start()
     for handler in progress_handlers:
@@ -35,7 +35,7 @@ class DownloadWorker(QThread):
         config = Config.Instance()
         base_path = os.path.expanduser(config['PATHS']['BASE_PATH'])
 
-        mirror_url = MIRRORS[mirror]
+        mirror_url = MIRRORS[mirror or 'GERMANY']
         dirname = item['dir']
         filename = item['filename']
 

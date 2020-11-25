@@ -11,6 +11,7 @@ class IdgamesResponseWidget:
         self.object_name_scope = object_name_scope + '_'
         self.except_elided = except_elided
         self.download_start_callback = download_start_callback
+        self.id = None
 
     def set_data(self, item):
         for key in self.data_labels:
@@ -35,17 +36,19 @@ class IdgamesResponseWidget:
     def download(self):
         self.download_button.setEnabled(False)
         if self.enabled:
-            self.progressbar.show()
             self.progressbar.setValue(0)
             self.download_button.setText('Downloading...')
             self.enabled = False
-            self.download_start_callback(self.id, self.download_progress_handler, self.download_finished_handler)
+            self.download_start_callback(self.id)
 
-    def download_progress_handler(self, count, block_size, total_size):
+    def download_progress(self, count, block_size, total_size):
+        self.download_button.setEnabled(False)
         percentage = min((count * block_size) / total_size * 100, 100)
         self.progressbar.setValue(percentage)
+        self.progressbar.show()
         
 
-    def download_finished_handler(self, _):
+    def download_finished(self):
+        self.download_button.setEnabled(False)
         self.download_button.setText('Downloaded')
         self.progressbar.hide()

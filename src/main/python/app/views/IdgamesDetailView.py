@@ -33,6 +33,6 @@ class IdgamesDetailView():
             self.textfile.hide()
 
 
-    def download(self, id, download_progress_handler, download_finished_handler):
+    def download(self, id):
         mirror = self.mirror_button_group.checkedButton().objectName()
-        self.controller.download(mirror, download_progress_handler, download_finished_handler)
+        self.controller.download(id, mirror)
