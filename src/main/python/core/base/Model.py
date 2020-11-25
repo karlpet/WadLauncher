@@ -13,17 +13,17 @@ class Model:
             if 'id' in obj:
                 self.objects[obj['id']] = obj
             else:
-                id = uuid.uuid1()
+                id = str(uuid.uuid1())
                 self.objects[id] = { 'id': id, **obj }
 
-    def save(self):
-        return self.saver(self.objects)
+    def save(self, id):
+        return self.saver(self.objects[id])
 
     def all(self):
         return [obj for obj in self.objects.values()]
 
     def create(self, **kwargs):
-        id = uuid.uuid1()
+        id = str(uuid.uuid1())
         obj = { 'id': id, **kwargs }
 
         self.objects[id] = obj

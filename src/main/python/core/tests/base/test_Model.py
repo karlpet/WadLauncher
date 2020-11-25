@@ -31,13 +31,13 @@ def test_loader():
 
 def test_saver():
     mock_model = Model(loader=mock_loader, saver=mock_saver)
-
-    assert(mock_model.save() == '{}')
-
     mock_model.load()
-    json_string = mock_model.save()
 
-    case.assertDictEqual(json.loads(json_string), mock_data)
+    wad = {'name':'foo', 'file':'foo.wad'}
+    id = mock_model.create(**wad)
+    json_string = mock_model.save(id)
+
+    case.assertDictEqual(json.loads(json_string), {'id':id, **wad})
 
 def test_create():
     mock_model = Model(loader=mock_loader, saver=mock_saver)
