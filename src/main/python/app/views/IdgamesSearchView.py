@@ -2,7 +2,7 @@ from PyQt5 import QtWidgets, QtGui, QtCore, uic
 from app.AppContext import *
 from app.workers.DWApiWorker import SEARCH_TYPES
 
-from core.utils.strings import strformat_size
+from core.utils.strings import str_filesize
 
 search_result_template_path = AppContext.Instance().get_resource('template/search_result_item.ui')
 Form, Base = uic.loadUiType(search_result_template_path)
@@ -19,10 +19,14 @@ class SearchResultWidget(Base, Form):
         data_labels = ['author', 'size', 'date', 'filename', 'title', 'description']
         for key in data_labels:
             label = self.findChild(QtWidgets.QLabel, 'search_result_' + key)
+            text = item.get(key)
             if key == 'size':
-                label.setText(strformat_size(item.get(key)))
-            else:
-                label.setText(item.get(key) or 'unknown')
+                text = str_filesize(text)
+            text = text or 'unknown'
+            if not (key == 'title' or key == 'description'):
+                metrics = QtGui.QFontMetrics(label.font())
+                text = metrics.elidedText(text, QtCore.Qt.ElideRight, label.width() - 2)
+            label.setText(text)
 
         self.id = item.get('id')
         self.progressbar = self.findChild(QtWidgets.QProgressBar, 'search_result_progress')
@@ -76,7 +80,8 @@ class IdgamesSearchView:
             # remove it from the layout list
             self.layout.removeWidget(widgetToRemove)
             # remove it from the gui
-            widgetToRemove.setParent(None)
+            if widgetToRemove != None:
+                widgetToRemove.setParent(None)
 
         search_result = result[0].get('file', [])
         if type(search_result) != list:
@@ -88,9 +93,11 @@ class IdgamesSearchView:
             self.layout.addWidget(QtWidgets.QLabel(warning['message']))
 
         for item in search_result:
-            search_result = SearchResultWidget()
-            search_result.setData(self.root, item, self.controller)
-            self.layout.addWidget(search_result)
+            search_result_widget = SearchResultWidget()
+            search_result_widget.setData(self.root, item, self.controller)
+            self.layout.addWidget(search_result_widget)
+        
+        self.layout.addStretch()
 
 class SearchBar:
     def __init__(self, root, controller):

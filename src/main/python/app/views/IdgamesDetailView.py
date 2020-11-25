@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets
 
-from core.utils.strings import strformat_size
+from core.utils.strings import str_filesize
 
 class IdgamesDetailView():
     def __init__(self, root, controller):
@@ -23,7 +23,7 @@ class IdgamesDetailView():
         for key in data_labels:
             label = self.root.findChild(QtWidgets.QLabel, 'idgames_detail_info_' + key)
             if key == 'size':
-                label.setText(strformat_size(item.get(key)))
+                label.setText(str_filesize(item.get(key)))
             else:
                 label.setText(str(item.get(key)) or 'unknown')
 
