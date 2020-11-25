@@ -1,4 +1,4 @@
-import os, sys
+import os, sys, json
 
 from core.base.Model import Model
 from app.config import Config
@@ -20,9 +20,14 @@ def wad_loader():
     return [load_wad(os.path.join(wads_path, dir)) for dir in os.listdir(wads_path)
                                                    if os.path.isdir(os.path.join(wads_path, dir))]
 
+def save_wad(item):
+    metadata_file_path = os.path.join(path, 'metadata.json')
+    with open(metadata_file_path, 'w+', encoding='utf-8') as f:
+        json.dump(item, f, ensure_ascii=False, indent=4)
+
 class Wads(Model):
     def __init__(self):
-        Model.__init__(self, loader=wad_loader)
+        Model.__init__(self, loader=wad_loader, saver=save_wad)
         self.load()
         self.wad_dir_files = []
         self.current_idgames_wad_id = None
@@ -36,10 +41,11 @@ class Wads(Model):
     def get_dir_contents(self):
         return self.wad_dir_files
     
-    def unzip_import_wad(self, file_path):
+    def unzip_import_wad(self, file_path, metadata=None):
         new_wad_dir = unzip(file_path)
 
         id = self.create(**load_wad(new_wad_dir))
+        self.save(id)
         self.broadcast(('CREATE_WAD', id))
     
     def get_random_wad(self):
