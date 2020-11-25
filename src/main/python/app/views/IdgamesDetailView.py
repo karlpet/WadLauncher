@@ -8,8 +8,7 @@ class IdgamesDetailView():
     def __init__(self, root, controller):
         self.controller = controller
         self.root = root
-        root.findChild(QtWidgets.QStackedWidget, 'main_stack').currentChanged.connect(self.controller.get_data)
-        
+
         self.mirror_button_group = QtWidgets.QButtonGroup()
         button_layout = self.root.findChild(QtWidgets.QVBoxLayout, 'idgames_detail_download_layout')
         radio_button_labels = ['Germany','Idaho','Greece','Greece (HTTP)','Texas','Germany (TLS)','New York','Virginia']

@@ -1,7 +1,6 @@
 import sys
 
 from app.views.SidebarView import SidebarView
-from app.helpers.StackedWidgetSelector import *
 
 class SidebarController:
     def __init__(self):
@@ -23,6 +22,5 @@ class SidebarController:
     
     def random_clicked(self):
         self.wads.get_random_wad()
-        display_widget(self.root, WidgetIndices.IDGAMES_DETAIL)
 
 sys.modules[__name__] = SidebarController()

@@ -27,8 +27,7 @@ class IdgamesSearchController:
             self.search_result = [self.search_result]
     
     def display_detail(self, wad_id):
-        self.models.wads.set_current_idgames_wad_id(wad_id)
-        display_widget(self.root, WidgetIndices.IDGAMES_DETAIL)
+        self.models.wads.get_wad_detail(wad_id)
 
     def download(self, id, progress_handler=None, download_handler=None):
         data = next((x for x in self.search_result if x['id'] == id), None)
