@@ -1,4 +1,6 @@
-from PyQt5 import QtWidgets, QtGui, QtCore, uic
+from PyQt5 import uic
+from PyQt5.QtWidgets import QPushButton, QScrollArea, QWidget, QVBoxLayout, QLabel, QPushButton, QComboBox, QLineEdit
+from PyQt5.QtCore import Qt
 
 from app.views.viewmodels.ComboBoxModel import *
 from app.AppContext import *
@@ -23,7 +25,7 @@ class SearchResultWidget(Base, Form):
     def set_data(self, item):
         self.idgames_response_widget.set_data(item)
 
-        self.view_details_button = self.findChild(QtWidgets.QPushButton, 'search_result_details')
+        self.view_details_button = self.findChild(QPushButton, 'search_result_details')
         self.view_details_button.clicked.connect(lambda _: self.controller.display_detail(item['id']))
 
 class IdgamesSearchView:
@@ -32,16 +34,16 @@ class IdgamesSearchView:
         self.controller = controller
         self.root = root
 
-        self.search_results_container = root.findChild(QtWidgets.QScrollArea, 'idgames_search_results_container')
+        self.search_results_container = root.findChild(QScrollArea, 'idgames_search_results_container')
         self.search_results_container.setWidgetResizable(True)
-        self.search_results = root.findChild(QtWidgets.QWidget, 'idgames_search_results')
+        self.search_results = root.findChild(QWidget, 'idgames_search_results')
 
-        self.layout = QtWidgets.QVBoxLayout()
+        self.layout = QVBoxLayout()
         self.layout.setContentsMargins(9, 9, 9, 9)
-        self.layout.setAlignment(QtCore.Qt.AlignTop)
+        self.layout.setAlignment(Qt.AlignTop)
         self.search_results.setLayout(self.layout)
 
-        self.layout.addWidget(QtWidgets.QLabel('Search result will show here...'))
+        self.layout.addWidget(QLabel('Search result will show here...'))
 
     def updateResults(self, result):
         for i in reversed(range(self.layout.count())): 
@@ -58,8 +60,8 @@ class IdgamesSearchView:
 
         warning = result[0].get('warning', None)
         if warning:
-            self.layout.addWidget(QtWidgets.QLabel(warning['type']))
-            self.layout.addWidget(QtWidgets.QLabel(warning['message']))
+            self.layout.addWidget(QLabel(warning['type']))
+            self.layout.addWidget(QLabel(warning['message']))
 
         for item in search_result:
             search_result_widget = SearchResultWidget(self.controller)
@@ -72,9 +74,9 @@ class SearchBar:
     def __init__(self, root, controller):
         self.controller = controller
 
-        self.searchbar_search = root.findChild(QtWidgets.QPushButton, 'idgames_searchbar_search')
-        self.searchbar_type_selector = root.findChild(QtWidgets.QComboBox, 'idgames_searchbar_type_selector')
-        self.searchbar_input = root.findChild(QtWidgets.QLineEdit, 'idgames_searchbar_input')
+        self.searchbar_search = root.findChild(QPushButton, 'idgames_searchbar_search')
+        self.searchbar_type_selector = root.findChild(QComboBox, 'idgames_searchbar_type_selector')
+        self.searchbar_input = root.findChild(QLineEdit, 'idgames_searchbar_input')
 
         self.searchbar_search.clicked.connect(self.search)
         self.searchbar_type_selector.setModel(ComboBoxModel(SEARCH_TYPES))
