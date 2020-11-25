@@ -13,6 +13,14 @@ class DWApiMethod(enum.Enum):
     GET = 4
     RANDOM = 5
 
+def api_worker_wrapper(method, done_handlers=[], *api_args):
+    worker = DWApiWorker(method, *api_args)
+    worker.start()
+    for handler in done_handlers:
+        worker.done.connect(handler)
+
+    return worker
+
 class DWApiWorker(QThread):
     done = pyqtSignal(object)
 

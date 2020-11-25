@@ -15,6 +15,16 @@ MIRRORS = {
     'VIRGINIA': 'http://www.gamers.org/pub/idgames/'
 }
 
+def download_worker_wrapper(item, progress_handlers=[], download_handlers=[], mirror=None):
+    worker = DownloadWorker(item, mirror)
+    worker.start()
+    for handler in progress_handlers:
+        worker.progress.connect(handler)
+    for handler in download_handlers:
+        worker.downloaded.connect(handler)
+
+    return worker
+
 class DownloadWorker(QThread):
     progress = pyqtSignal(int, int, int)
     downloaded = pyqtSignal(str)
