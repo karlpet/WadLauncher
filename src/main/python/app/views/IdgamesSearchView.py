@@ -23,7 +23,8 @@ class SearchResultWidget(Base, Form):
         self.idgames_response_widget = IdgamesResponseWidget(self, data_labels, 'search_result', self.controller.download)
 
     def set_data(self, item):
-        self.idgames_response_widget.set_data(item)
+        already_downloaded = bool(self.controller.wads.find_by(id=item['id']))
+        self.idgames_response_widget.set_data(item, already_downloaded)
 
         self.view_details_button = self.findChild(QPushButton, 'search_result_details')
         self.view_details_button.clicked.connect(lambda _: self.controller.display_detail(item['id']))
@@ -45,6 +46,8 @@ class IdgamesSearchView:
 
         self.layout.addWidget(QLabel('Search result will show here...'))
 
+        self.search_results_widgets = {}
+
     def updateResults(self, result):
         for i in reversed(range(self.layout.count())): 
             widgetToRemove = self.layout.itemAt(i).widget()
@@ -63,10 +66,12 @@ class IdgamesSearchView:
             self.layout.addWidget(QLabel(warning['type']))
             self.layout.addWidget(QLabel(warning['message']))
 
+        self.search_results_widgets = {}
         for item in search_result:
             search_result_widget = SearchResultWidget(self.controller)
             search_result_widget.set_data(item)
             self.layout.addWidget(search_result_widget)
+            self.search_results_widgets[item['id']] = search_result_widget
         
         self.layout.addStretch()
 

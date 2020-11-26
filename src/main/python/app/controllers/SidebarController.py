@@ -21,6 +21,6 @@ class SidebarController:
             self.view.show_dirs(dir_files)
     
     def random_clicked(self):
-        self.wads.get_random_wad()
+        self.wads.idgames_random()
 
 sys.modules[__name__] = SidebarController()

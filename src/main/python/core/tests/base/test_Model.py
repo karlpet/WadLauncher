@@ -31,21 +31,26 @@ def test_loader():
 
 def test_saver():
     mock_model = Model(loader=mock_loader, saver=mock_saver)
-
-    assert(mock_model.save() == '{}')
-
     mock_model.load()
-    json_string = mock_model.save()
 
-    case.assertDictEqual(json.loads(json_string), mock_data)
+    wad = {'name':'foo', 'file':'foo.wad'}
+    id = mock_model.create(**wad)
+    json_string = mock_model.save(id)
+
+    case.assertDictEqual(json.loads(json_string), {'id':id, **wad})
 
 def test_create():
     mock_model = Model(loader=mock_loader, saver=mock_saver)
     mock_model.load()
-    wad = {'name':'foo', 'file':'foo.wad'}
 
+    wad = {'name':'foo', 'file':'foo.wad'}
     id = mock_model.create(**wad)
     assert(mock_model.find(id).items() >= wad.items())
+
+    wad2 = {'name':'bar', 'file':'bar.wad'}
+    wad2metadata = { 'id': '1234', 'title': 'Bar', 'description': 'This is bar.wad!' }
+    id2 = mock_model.create(**wad2, **wad2metadata)
+    case.assertDictEqual(mock_model.find(id2), {**wad2, **wad2metadata})
 
 def test_find():
     mock_model = Model(loader=mock_loader)

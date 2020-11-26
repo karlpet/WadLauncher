@@ -3,6 +3,7 @@
 import requests, os, enum, re
 
 from PyQt5.QtCore import QThread, pyqtSignal
+from app.workers.WorkerPool import *
 
 SEARCH_TYPES = ['filename', 'title', 'author', 'email', 'description', 'credits', 'editors', 'textfile']
 
@@ -12,6 +13,14 @@ class DWApiMethod(enum.Enum):
     ABOUT = 3
     GET = 4
     RANDOM = 5
+
+def api_worker_wrapper(method, done_handlers=[], *api_args):
+    worker = DWApiWorker(method, *api_args)
+    worker.start()
+    for handler in done_handlers:
+        worker.done.connect(handler)
+
+    WorkerPool.Instance().start(worker)
 
 class DWApiWorker(QThread):
     done = pyqtSignal(object)
