@@ -30,14 +30,51 @@
        <number>9</number>
       </property>
       <item>
-       <widget class="QListView" name="wad_list">
-        <property name="maximumSize">
-         <size>
-          <width>200</width>
-          <height>16777215</height>
-         </size>
+       <layout class="QVBoxLayout" name="wads">
+        <property name="sizeConstraint">
+         <enum>QLayout::SetMaximumSize</enum>
         </property>
-       </widget>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <layout class="QVBoxLayout" name="wadsview_chooser">
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="label_15">
+            <property name="text">
+             <string>Choose detailed view</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="wadsview_chooser_wadtable">
+            <property name="text">
+             <string>Table</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QListView" name="wad_list">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>200</width>
+            <height>16777215</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
        <widget class="QStackedWidget" name="main_stack">
@@ -80,8 +117,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>98</width>
-               <height>28</height>
+               <width>82</width>
+               <height>16</height>
               </rect>
              </property>
             </widget>
@@ -136,7 +173,7 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>596</width>
+               <width>594</width>
                <height>795</height>
               </rect>
              </property>
