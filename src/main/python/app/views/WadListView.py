@@ -1,6 +1,8 @@
 from PyQt5.QtWidgets import QListView, QAbstractItemView
 from PyQt5.QtCore import Qt, QAbstractListModel
 
+from app.helpers.StackedWidgetSelector import widget_changed, WidgetIndices
+
 class WadListViewModel(QAbstractListModel):
     def __init__(self, wads = [], parent=None):
         QAbstractListModel.__init__(self, parent)
@@ -28,13 +30,21 @@ class WadListView:
         self.wads = wads
 
         self.wad_list.setSelectionMode(QAbstractItemView.SingleSelection)
-        self.wad_list.clicked.connect(self.select_item)
-
         self.wad_list_view_model = WadListViewModel(wads.all())
         self.wad_list.setModel(self.wad_list_view_model)
+        self.wad_list.selectionModel().selectionChanged.connect(self.select_item)
 
-    def select_item(self, qindex):
-        id = self.wad_list_view_model.data(qindex, Qt.UserRole)
+        widget_changed(root, self.on_widget_change)
+
+    def on_widget_change(self, widget_index):
+        if widget_index == WidgetIndices.WAD_TABLE:
+            self.wad_list.hide()
+        else:
+            self.wad_list.show()
+
+    def select_item(self, selection):
+        index = selection.indexes()[0]
+        id = self.wad_list_view_model.data(index, Qt.UserRole)
 
         self.wads.select_wad(id)
 
