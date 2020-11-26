@@ -6,6 +6,7 @@ from app.config import Config
 from app.utils.Unzipper import unzip
 from app.workers.DWApiWorker import api_worker_wrapper, DWApiMethod
 from app.workers.DownloadWorker import download_worker_wrapper
+from app.workers.ArchiveExtractorWorker import archive_extractor_worker_wrapper
 
 config = Config.Instance()
 wads_path = os.path.expanduser(config['PATHS']['WADS_PATH'])
@@ -48,6 +49,17 @@ class Wads(Model):
     def get_dir_contents(self):
         return self.wad_dir_files
     
+    def extract_archive(self, file_path, should_remove_archive=False, item={}):
+        done_handlers = [
+            lambda wad_dir: self.import_wad(wad_dir, item)
+        ]
+        archive_extractor_worker_wrapper(file_path, should_remove_archive, done_handlers)
+
+    def import_wad(self, wad_dir, item={}):
+        id = self.create(**load_wad(wad_dir), **item)
+        self.save(id)
+        self.broadcast(('CREATE_WAD', id))
+
     def unzip_import_wad(self, archive_file_path, item={}):
         new_wad_dir = unzip(archive_file_path)
 
@@ -62,7 +74,7 @@ class Wads(Model):
         ]
         download_handlers = [
             lambda _: self.broadcast(('DOWNLOAD_FINISHED', id)),
-            lambda file_path: self.unzip_import_wad(file_path, item)
+            lambda file_path: self.extract_archive(file_path, True, item)
         ]
         download_worker_wrapper(item, progress_handlers, download_handlers, mirror)
 

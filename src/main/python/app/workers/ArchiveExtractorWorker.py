@@ -5,8 +5,8 @@ from PyQt5.QtCore import QThread, pyqtSignal
 from app.config import Config
 from app.workers.WorkerPool import *
 
-def archive_extractor_worker_wrapper(done_handlers=[], file_path, should_remove_archive=False):
-    worker = ArchiveExtractorWorker(method, file_path, should_remove_archive)
+def archive_extractor_worker_wrapper(file_path, should_remove_archive=False, done_handlers=[]):
+    worker = ArchiveExtractorWorker(file_path, should_remove_archive)
     worker.start()
     for handler in done_handlers:
         worker.done.connect(handler)
@@ -28,16 +28,16 @@ class ArchiveExtractorWorker(QThread):
         # remove file extension (.zip or whatever)
         pattern = re.compile(r'\.[a-z0-9]+$')
         self.file_dir = pattern.sub('', pathlib.Path(file_path).name)
-        self.temp_extraction_path = os.path.join(base_path, 'temp', file_dir)
+        self.temp_extraction_path = os.path.join(base_path, 'temp', self.file_dir)
 
-    def run():
+    def run(self):
         pathlib.Path(self.temp_extraction_path).mkdir(parents=True, exist_ok=True)
-        shutil.unpack_archive(file_path, new_wad_path)
-
-        tree = [f for f in os.walk(new_wad_path)][0]
-        p, directories, files = tree
+        shutil.unpack_archive(self.file_path, self.temp_extraction_path)
 
         source_dir = self.temp_extraction_path
+        
+        tree = [f for f in os.walk(self.temp_extraction_path)][0]
+        p, directories, files = tree
         # if no files are in the first level of archive extraction
         # and there exists only one directory instead
         # then we need to move the directory inside our temp_extraction_path instead.
@@ -47,7 +47,8 @@ class ArchiveExtractorWorker(QThread):
 
         destination_dir = os.path.join(self.wads_path, self.file_dir)
         shutil.move(source_dir, destination_dir)
-        shutil.rmtree(self.temp_extraction_path)
+        if source_dir != self.temp_extraction_path:
+            shutil.rmtree(self.temp_extraction_path)
 
         if self.should_remove_archive:
             os.remove(self.file_path)
