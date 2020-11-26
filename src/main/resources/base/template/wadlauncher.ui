@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1062</width>
-    <height>745</height>
+    <height>768</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -136,8 +136,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>596</width>
-               <height>755</height>
+               <width>612</width>
+               <height>632</height>
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout_2">
@@ -687,34 +687,18 @@
                 </item>
                </layout>
               </item>
-              <item row="3" column="0" colspan="2">
+              <item row="2" column="0" colspan="2">
                <spacer name="verticalSpacer_2">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
                 </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Minimum</enum>
-                </property>
                 <property name="sizeHint" stdset="0">
                  <size>
                   <width>20</width>
-                  <height>0</height>
+                  <height>40</height>
                  </size>
                 </property>
                </spacer>
-              </item>
-              <item row="2" column="0" colspan="2">
-               <widget class="QPlainTextEdit" name="idgames_detail_textfile">
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>500</height>
-                 </size>
-                </property>
-                <property name="readOnly">
-                 <bool>true</bool>
-                </property>
-               </widget>
               </item>
              </layout>
             </widget>
@@ -811,14 +795,14 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="sidebar_dirlist_label">
+          <widget class="QLabel" name="sidebar_waddir_label">
            <property name="text">
             <string>Contents of directory</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QListView" name="sidebar_dirlist">
+          <widget class="QTreeView" name="sidebar_waddir">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
              <horstretch>0</horstretch>
@@ -830,6 +814,9 @@
              <width>16777215</width>
              <height>16777215</height>
             </size>
+           </property>
+           <property name="headerHidden">
+            <bool>true</bool>
            </property>
           </widget>
          </item>

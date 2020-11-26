@@ -13,12 +13,10 @@ class SidebarController:
         self.wads.subscribe(self.wad_listener)
     
     def wad_listener(self, args):
-        action, _ = args
+        action, data = args
 
         if action == 'SELECT_WAD':
-            dir_files = self.wads.get_dir_contents()
-
-            self.view.show_dirs(dir_files)
+            self.view.show_dir(data['path'])
     
     def random_clicked(self):
         self.wads.idgames_random()
