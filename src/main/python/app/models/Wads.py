@@ -3,7 +3,6 @@ import os, sys, json
 from core.base.Model import Model
 
 from app.config import Config
-from app.utils.Unzipper import unzip
 from app.workers.DWApiWorker import api_worker_wrapper, DWApiMethod
 from app.workers.DownloadWorker import download_worker_wrapper
 from app.workers.ArchiveExtractorWorker import archive_extractor_worker_wrapper
@@ -57,13 +56,6 @@ class Wads(Model):
 
     def import_wad(self, wad_dir, item={}):
         id = self.create(**load_wad(wad_dir), **item)
-        self.save(id)
-        self.broadcast(('CREATE_WAD', id))
-
-    def unzip_import_wad(self, archive_file_path, item={}):
-        new_wad_dir = unzip(archive_file_path)
-
-        id = self.create(**load_wad(new_wad_dir), **item)
         self.save(id)
         self.broadcast(('CREATE_WAD', id))
 
