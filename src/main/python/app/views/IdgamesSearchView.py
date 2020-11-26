@@ -23,7 +23,8 @@ class SearchResultWidget(Base, Form):
         self.idgames_response_widget = IdgamesResponseWidget(self, data_labels, 'search_result', self.controller.download)
 
     def set_data(self, item):
-        self.idgames_response_widget.set_data(item)
+        already_downloaded = bool(self.controller.wads.find_by(id=item['id']))
+        self.idgames_response_widget.set_data(item, already_downloaded)
 
         self.view_details_button = self.findChild(QPushButton, 'search_result_details')
         self.view_details_button.clicked.connect(lambda _: self.controller.display_detail(item['id']))

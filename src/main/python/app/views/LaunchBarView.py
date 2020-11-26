@@ -33,4 +33,4 @@ class LaunchBarView:
         if wad == None:
             self.selected_wad_name.setText('No wad selected')
         else:
-            self.selected_wad_name.setText(wad['name'])
+            self.selected_wad_name.setText(wad.get('title') or wad['name'])

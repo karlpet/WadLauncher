@@ -13,7 +13,7 @@ class IdgamesResponseWidget:
         self.download_start_callback = download_start_callback
         self.id = None
 
-    def set_data(self, item):
+    def set_data(self, item, already_downloaded):
         for key in self.data_labels:
             label = self.root.findChild(QLabel, self.object_name_scope + key)
             text = str(item.get(key))
@@ -24,16 +24,18 @@ class IdgamesResponseWidget:
                 metrics = QFontMetrics(label.font())
                 text = metrics.elidedText(text, Qt.ElideRight, label.width() - 2)
             label.setText(text)
-    
+
         self.id = item.get('id')
         self.progressbar = self.root.findChild(QProgressBar, self.object_name_scope + 'progress')
         self.progressbar.hide()
         self.download_button = self.root.findChild(QPushButton, self.object_name_scope + 'download')
         self.download_button.clicked.connect(self.download)
         self.download_button.setText('Download')
-        self.enabled = True
-        self.download_button.setEnabled(True)
 
+        self.enabled = not already_downloaded
+        self.download_button.setEnabled(not already_downloaded)
+        if already_downloaded:
+            self.download_finished()
 
     def download(self):
         self.download_button.setEnabled(False)
@@ -48,7 +50,6 @@ class IdgamesResponseWidget:
         percentage = min((count * block_size) / total_size * 100, 100)
         self.progressbar.setValue(percentage)
         self.progressbar.show()
-        
 
     def download_finished(self):
         self.download_button.setEnabled(False)

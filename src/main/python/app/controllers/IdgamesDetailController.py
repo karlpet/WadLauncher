@@ -22,7 +22,8 @@ class IdgamesDetailController:
         if action in ['RANDOM_WAD', 'DETAIL_WAD']:
             result, err = data
             self.data = result
-            self.view.set_data(result)
+            already_downloaded = bool(self.wads.find_by(id=result['id']))
+            self.view.set_data(result, already_downloaded)
             display_widget(self.root, WidgetIndices.IDGAMES_DETAIL)
         elif action == 'DOWNLOAD_PROGRESS':
             id, progress = data

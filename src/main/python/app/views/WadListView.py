@@ -11,7 +11,9 @@ class WadListViewModel(QAbstractListModel):
 
     def data(self, index, role):
         if role == Qt.DisplayRole:
-            return self.__wads[index.row()].get('name')
+            wad = self.__wads[index.row()]
+
+            return wad.get('title') or wad.get('name')
         if role == Qt.UserRole:
             return self.__wads[index.row()].get('id')
 
