@@ -1,16 +1,24 @@
-from PyQt5.QtWidgets import QButtonGroup, QVBoxLayout, QRadioButton, QPlainTextEdit
+from PyQt5 import uic
+from PyQt5.QtWidgets import QVBoxLayout, QPlainTextEdit, QButtonGroup, QRadioButton
 
-from core.utils.strings import str_filesize
+from app.AppContext import AppContext
+from app.helpers.StackedWidgetSelector import add_widget, WidgetIndices
+from app.views.widgets.IdgamesResponseWidget import IdgamesResponseWidget
 
-from app.views.widgets.IdgamesResponseWidget import *
+template_path = AppContext.Instance().get_resource('template/idgames_detail.ui')
+Form, Base = uic.loadUiType(template_path)
 
-class IdgamesDetailView():
-    def __init__(self, root, controller):
+class IdgamesDetailView(Base, Form):
+    def __init__(self, root, controller, parent=None):
+        super(self.__class__, self).__init__(parent)
+
+        self.setupUi(self)
+        add_widget(root, self, 'IDGAMES_DETAIL')
+
         self.controller = controller
-        self.root = root
 
         self.mirror_button_group = QButtonGroup()
-        self.button_layout = self.root.findChild(QVBoxLayout, 'idgames_detail_download_layout')
+        self.button_layout = self.findChild(QVBoxLayout, 'idgames_detail_download_layout')
         radio_button_labels = ['Germany','Idaho','Greece','Greece (HTTP)','Texas','Germany (TLS)','New York','Virginia']
         for i, label in enumerate(radio_button_labels):
             radio_button = QRadioButton(label)
@@ -20,11 +28,11 @@ class IdgamesDetailView():
             self.mirror_button_group.addButton(radio_button)
 
         data_labels = ['title', 'filename', 'size', 'date', 'author', 'description', 'credits', 'base', 'buildtime', 'editors', 'bugs','rating']
-        self.idgames_response_widget = IdgamesResponseWidget(root, data_labels, 'idgames_detail', self.download, data_labels)
+        self.idgames_response_widget = IdgamesResponseWidget(self, data_labels, 'idgames_detail', self.download, data_labels)
 
     def set_data(self, item, already_downloaded):
         self.idgames_response_widget.set_data(item, already_downloaded)
-        self.textfile = self.root.findChild(QPlainTextEdit, 'idgames_detail_textfile')
+        self.textfile = self.findChild(QPlainTextEdit, 'idgames_detail_textfile')
 
         if item.get('textfile'):
             self.textfile.setPlainText(item['textfile'])

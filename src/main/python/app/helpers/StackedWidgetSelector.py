@@ -1,12 +1,15 @@
-import enum
-
 from PyQt5.QtWidgets import QStackedWidget
 
-class WidgetIndices(enum.Enum):
+class WidgetIndices:
     IDGAMES_SEARCH = 0
-    IDGAMES_DETAIL = 1
-    WELCOME = 2
+    IDGAMES_DETAIL = 0
+    WELCOME = 0
+
+def add_widget(root, widget, widget_index):
+    main_stack = root.findChild(QStackedWidget, 'main_stack')
+    index = main_stack.addWidget(widget)
+    setattr(WidgetIndices, widget_index, index)
 
 def display_widget(root, widget_index):
-    stackedWidget = root.findChild(QStackedWidget, 'main_stack')
-    stackedWidget.setCurrentIndex(widget_index.value)
+    main_stack = root.findChild(QStackedWidget, 'main_stack')
+    main_stack.setCurrentIndex(widget_index)
