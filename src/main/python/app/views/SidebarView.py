@@ -3,7 +3,7 @@ import os
 from PyQt5.QtWidgets import QTreeView, QPushButton, QFileSystemModel
 from PyQt5.QtCore import QAbstractListModel, Qt, QDir
 
-from app.helpers.StackedWidgetSelector import *
+from app.helpers.StackedWidgetSelector import display_widget, WidgetIndices
 
 class SidebarView:
     def __init__(self, root, controller):
@@ -19,6 +19,11 @@ class SidebarView:
 
         self.random_button = root.findChild(QPushButton, 'sidebar_idgames_random')
         self.random_button.clicked.connect(controller.random_clicked)
+
+        self.wadtable_button = root.findChild(QPushButton, 'sidebar_wadsview_table')
+        def wadtable(): display_widget(root, WidgetIndices.WAD_TABLE)
+        self.wadtable_button.clicked.connect(wadtable)
+
 
     def show_dir(self, path):
         self.wad_dir_model.setRootPath(QDir.currentPath())

@@ -38,27 +38,6 @@
          <number>0</number>
         </property>
         <item>
-         <layout class="QVBoxLayout" name="wadsview_chooser">
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="QLabel" name="label_15">
-            <property name="text">
-             <string>Choose detailed view</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="wadsview_chooser_wadtable">
-            <property name="text">
-             <string>Table</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
          <widget class="QListView" name="wad_list">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -151,6 +130,27 @@
             </item>
            </layout>
           </widget>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="sidebar_wadsview">
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="label_15">
+             <property name="text">
+              <string>Choose detailed view</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="sidebar_wadsview_table">
+             <property name="text">
+              <string>Filter and Sort Table</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
          <item>
           <widget class="QLabel" name="sidebar_waddir_label">

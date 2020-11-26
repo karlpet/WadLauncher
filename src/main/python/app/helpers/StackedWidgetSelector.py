@@ -16,3 +16,7 @@ def add_widget(root, widget, widget_index):
 def display_widget(root, widget_index):
     main_stack = root.findChild(QStackedWidget, 'main_stack')
     main_stack.setCurrentIndex(widget_index)
+
+def widget_changed(root, callback):
+    main_stack = root.findChild(QStackedWidget, 'main_stack')
+    main_stack.currentChanged.connect(callback)
