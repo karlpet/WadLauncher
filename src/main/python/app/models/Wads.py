@@ -12,16 +12,17 @@ wads_path = os.path.expanduser(config['PATHS']['WADS_PATH'])
 extensions = ['.wad', '.WAD', '.pk3', '.PK3']
 
 def load_wad(dir):
-    dir_contents = [file for file in os.listdir(dir)]
-    if 'metadata.json' in dir_contents:
+    if 'metadata.json' in os.listdir(dir):
         with open(os.path.join(dir, 'metadata.json'), 'r') as json_file:
             return json.load(json_file)
 
-    for file in dir_contents:
-        if any((file.endswith(ext) for ext in extensions)):
-            return { 'name': os.path.basename(dir), 'file': file, 'path': dir }
+    for (root, _, files) in os.walk(dir):
+        for file in files:
+            if any((file.endswith(ext) for ext in extensions)):
+                return { 'name': os.path.basename(dir), 'file_path': os.path.join(root, file), 'path': dir }
 
-    return { 'name': 'ERROR, no wad found!', 'file': '' }
+    return { 'name': os.path.basename(dir), 'file_path': None, 'path': dir, 'error': 'No mod file found (.wad or .pk3)' }
+
 
 def wad_loader():
     return [load_wad(os.path.join(wads_path, dir)) for dir in os.listdir(wads_path)
