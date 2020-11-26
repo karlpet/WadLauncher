@@ -1,5 +1,7 @@
-from PyQt5.QtWidgets import QListView, QAbstractItemView
+from PyQt5.QtWidgets import QListView, QAbstractItemView, QPushButton
 from PyQt5.QtCore import Qt, QAbstractListModel
+
+from app.helpers.StackedWidgetSelector import WidgetIndices, display_widget
 
 class WadListViewModel(QAbstractListModel):
     def __init__(self, wads = [], parent=None):
@@ -32,6 +34,10 @@ class WadListView:
 
         self.wad_list_view_model = WadListViewModel(wads.all())
         self.wad_list.setModel(self.wad_list_view_model)
+
+        self.wadtable_button = root.findChild(QPushButton, 'wadsview_chooser_wadtable')
+        def wadtable(): display_widget(root, WidgetIndices.WAD_TABLE)
+        self.wadtable_button.clicked.connect(wadtable)
 
     def select_item(self, qindex):
         id = self.wad_list_view_model.data(qindex, Qt.UserRole)

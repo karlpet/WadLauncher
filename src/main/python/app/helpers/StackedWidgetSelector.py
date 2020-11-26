@@ -1,9 +1,12 @@
 from PyQt5.QtWidgets import QStackedWidget
 
+# The index values of these known first when
+# widgets has been added to the stack.
 class WidgetIndices:
     IDGAMES_SEARCH = 0
     IDGAMES_DETAIL = 0
     WELCOME = 0
+    WAD_TABLE = 0
 
 def add_widget(root, widget, widget_index):
     main_stack = root.findChild(QStackedWidget, 'main_stack')
