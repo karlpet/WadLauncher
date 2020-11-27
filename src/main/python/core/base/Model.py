@@ -19,8 +19,8 @@ class Model:
         return [obj for obj in self.objects.values()]
 
     def create(self, **kwargs):
-        id = str(uuid.uuid1()) if not 'id' in kwargs else kwargs['id']
-        self.objects[id] = { 'id': id, **kwargs }
+        id = str(uuid.uuid1()) if not 'id' in kwargs else str(kwargs['id'])
+        self.objects[id] = { **kwargs, 'id': id }
 
         return id
 
