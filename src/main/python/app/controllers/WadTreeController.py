@@ -24,4 +24,7 @@ class WadTreeController:
             model.save(child['id'])
         self.models.categories.remove(category['id'])
 
+    def remove_wad(self, wad):
+        self.models.wads.remove(wad['id'])
+
 sys.modules[__name__] = WadTreeController()

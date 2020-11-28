@@ -113,7 +113,7 @@ class WadTableView(Base, Form):
     def remove_item(self, wad):
         for row in range(self.wadtable_model.rowCount()):
             item = self.wadtable_model.item(row)
-            if item.data(DATA_ROLE)['id'] == wad['id']:
+            if item and item.data(DATA_ROLE)['id'] == wad['id']:
                 self.wadtable_model.removeRow(row)
 
     def import_wads(self, wads):
