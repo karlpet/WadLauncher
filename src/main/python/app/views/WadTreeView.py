@@ -30,7 +30,7 @@ class WadTreeView(Base, Form):
         self.wadtree_model.itemChanged.connect(self.internal_move)
         self.selected_index = None
 
-        self.wadtree = self.findChild(DeselectableTreeView, 'wadtree')
+        self.wadtree = self.findChild(QTreeView, 'wadtree')
         self.wadtree.setDragEnabled(True)
         self.wadtree.viewport().setAcceptDrops(True)
         self.wadtree.setDropIndicatorShown(True)
@@ -77,6 +77,13 @@ class WadTreeView(Base, Form):
             if item_data['model_type'] == 'categories':
                 def remove_action(): self.remove_category(item)
                 menu_actions['Remove category (' + item_data['name'] + ')'] = remove_action
+            elif item_data['model_type'] == 'wads':
+                wad_string = item_data.get('title') or item_data.get('name')
+                remove_wad_string = 'Remove ({})'.format(wad_string)
+                def remove_wad():
+                    self.wadtree_model.removeRow(item.row())
+                    self.controller.remove_wad(item_data)
+                menu_actions[remove_wad_string] = remove_wad
 
         execute_menu = make_context_menu(self, menu_actions)
         execute_menu(pos)
@@ -125,6 +132,13 @@ class WadTreeView(Base, Form):
     def add_wad(self, wad):
         item = self.create_row(wad)
         self.wadtree_model.invisibleRootItem().appendRow(item)
+
+    def remove_wad(self, wad):
+        for row in range(self.wadtree_model.rowCount()):
+            item = self.wadtree_model.item(row)
+            if item and item.data(DATA_ROLE)['id'] == wad['id']:
+                self.wadtree_model.removeRow(row)
+
 
     def select_tree_index(self, selection):
         if len(selection.indexes()) == 0:

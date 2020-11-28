@@ -28,7 +28,7 @@ class SidebarView:
         def wadtable(): display_widget(root, WidgetIndices.WAD_TREE)
         self.wadtree.clicked.connect(wadtable)
 
-
     def show_dir(self, path):
         self.wad_dir_model.setRootPath(QDir.currentPath())
         self.wad_dir.setRootIndex(self.wad_dir_model.index(path))
+        self.selected_path = path
