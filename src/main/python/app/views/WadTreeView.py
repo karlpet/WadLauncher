@@ -126,6 +126,13 @@ class WadTreeView(Base, Form):
         item = self.create_row(wad)
         self.wadtree_model.invisibleRootItem().appendRow(item)
 
+    def remove_wad(self, wad):
+        for row in range(self.wadtree_model.rowCount()):
+            item = self.wadtree_model.item(row)
+            if item.data(DATA_ROLE)['id'] == wad['id']:
+                self.wadtree_model.removeRow(row)
+
+
     def select_tree_index(self, selection):
         if len(selection.indexes()) == 0:
             self.selected_index = None

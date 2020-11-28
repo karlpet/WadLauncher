@@ -1,11 +1,12 @@
 from PyQt5 import uic
-from PyQt5.QtWidgets import QTableView, QLineEdit
+from PyQt5.QtWidgets import QTableView, QLineEdit, QAbstractItemView
 from PyQt5.QtCore import Qt, QModelIndex, QItemSelectionModel, QSortFilterProxyModel
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 
 from app.AppContext import AppContext
 from app.helpers.StackedWidgetSelector import add_widget
 from app.helpers.WadItemFactory import make_wad_item, DATA_ROLE
+from app.helpers.ContextMenuFactory import make_context_menu
 
 template_path = AppContext.Instance().get_resource('template/wadtable.ui')
 Form, Base = uic.loadUiType(template_path)
@@ -43,21 +44,27 @@ class WadTableSortFilterProxyModel(QSortFilterProxyModel):
         return True
 
 class WadTableView(Base, Form):
-    def __init__(self, root, wads, parent=None):
+    def __init__(self, root, wads, controller, parent=None):
         super(self.__class__, self).__init__(parent)
 
         self.setupUi(self)
         add_widget(root, self, 'WAD_TABLE')
 
         self.wads = wads
+        self.controller = controller
+
         self.proxy = WadTableSortFilterProxyModel(root)
         self.wadtable_model = QStandardItemModel()
         self.proxy.setSourceModel(self.wadtable_model)
+        self.selected_item = None
 
         self.wadtable = self.findChild(QTableView, 'wadtable')
         self.wadtable.setModel(self.proxy)
         self.wadtable.selectionModel().selectionChanged.connect(self.select_item)
         self.wadtable.setSortingEnabled(True)
+        self.wadtable.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.wadtable.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.wadtable.customContextMenuRequested.connect(self.open_menu)
 
         self.wadtable_filter = self.findChild(QLineEdit, 'wadtable_filter')
         self.wadtable_filter.textChanged.connect(self.proxy.setFilterFixedString)
@@ -67,14 +74,32 @@ class WadTableView(Base, Form):
 
         self.import_wads(wads.all())
 
+    def open_menu(self, pos):
+        if self.selected_item == None:
+            return
+        item = self.selected_item.data(DATA_ROLE)
+
+        wad_string = item.get('title') or item.get('name')
+        remove_wad_string = 'Remove ({})'.format(wad_string)
+        def remove_wad():
+            self.wadtable_model.removeRow(self.selected_item.row())
+            self.controller.remove_wad(item)
+        menu_actions = { remove_wad_string: remove_wad }
+
+        execute_menu = make_context_menu(self.wadtable, menu_actions)
+        execute_menu(pos)
+
     def select_item(self, selection):
         if len(selection.indexes()) == 0:
+            self.selected_item = None
             return
 
-        index = selection.indexes()[0]
-        wad = self.wadtable.model().data(index, DATA_ROLE)
+        proxy_index = selection.indexes()[0]
+        index = self.proxy.mapToSource(proxy_index)
+        item = self.wadtable_model.itemFromIndex(index)
 
-        self.wads.select_wad(wad['id'])
+        self.selected_item = item
+        self.wads.select_wad(item.data(DATA_ROLE)['id'])
 
     def add_item(self, wad):
         item = make_wad_item(wad, TABLE_ITEM_FLAGS)
@@ -84,6 +109,12 @@ class WadTableView(Base, Form):
         items = [item, *column_items]
 
         self.wadtable_model.appendRow(items)
+
+    def remove_item(self, wad):
+        for row in range(self.wadtable_model.rowCount()):
+            item = self.wadtable_model.item(row)
+            if item.data(DATA_ROLE)['id'] == wad['id']:
+                self.wadtable_model.removeRow(row)
 
     def import_wads(self, wads):
         for wad in wads:

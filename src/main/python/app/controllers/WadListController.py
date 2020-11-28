@@ -8,7 +8,7 @@ class WadListController:
     
     def show(self, root, models):
         self.wads = models.wads
-        self.view = WadListView(root, self.wads)
+        self.view = WadListView(root, self.wads, self)
 
         self.wads.subscribe(self.wad_subscription)
     
@@ -17,5 +17,10 @@ class WadListController:
 
         if (action == 'CREATE_WAD'):
             self.view.add_item(self.wads.find(data))
+        elif action == 'REMOVE_WAD':
+            self.view.remove_item(data)
+
+    def remove_wad(self, wad):
+        self.wads.remove(wad['id'])
 
 sys.modules[__name__] = WadListController()

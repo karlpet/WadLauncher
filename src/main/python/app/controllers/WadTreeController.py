@@ -13,6 +13,8 @@ class WadTreeController:
 
         if (action == 'CREATE_WAD'):
             self.view.add_wad(self.models.wads.find(data))
+        elif action == 'REMOVE_WAD':
+            self.view.remove_wad(data)
 
     def remove_category(self, category, children):
         parent_id = category.get('category_id')

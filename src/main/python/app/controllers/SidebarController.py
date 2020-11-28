@@ -17,7 +17,7 @@ class SidebarController:
 
         if action == 'SELECT_WAD':
             self.view.show_dir(data['path'])
-    
+ 
     def random_clicked(self):
         self.wads.idgames_random()
 

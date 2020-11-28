@@ -1,4 +1,4 @@
-import os, sys, json
+import os, sys, json, shutil
 
 from core.base.Model import Model
 
@@ -78,6 +78,11 @@ class Wads(Model):
     def idgames_search(self, text, search_by):
         handlers = [lambda result: self.broadcast(('SEARCH_WADS', result))]
         api_worker_wrapper(DWApiMethod.SEARCH, handlers, text, search_by)
+    
+    def remove(self, id):
+        wad = self.delete(id)
+        self.broadcast(('REMOVE_WAD', wad))
+        shutil.rmtree(wad['path'])
 
 
 sys.modules[__name__] = Wads()
