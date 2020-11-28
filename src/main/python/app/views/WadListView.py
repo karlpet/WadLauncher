@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QListView, QAbstractItemView
-from PyQt5.QtCore import Qt, QAbstractListModel
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QStandardItemModel
 
 from app.helpers.StackedWidgetSelector import widget_changed, WidgetIndices
