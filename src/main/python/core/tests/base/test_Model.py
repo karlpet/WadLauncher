@@ -7,9 +7,9 @@ case = TestCase()
 
 # ----- MOCK DATA -----
 mock_data = {
-    '0': {'id': '0', 'name': 'going down', 'file': 'gd.wad'},
-    '1': {'id': '1', 'name': 'miasma', 'file': 'miasma.wad'},
-    '2': {'id': '2', 'name': 'sunder', 'file': 'sunder.wad'},
+    '0': {'id': '0', 'name': 'going down', 'file': 'gd.wad', 'model_type': 'model'},
+    '1': {'id': '1', 'name': 'miasma', 'file': 'miasma.wad', 'model_type': 'model'},
+    '2': {'id': '2', 'name': 'sunder', 'file': 'sunder.wad', 'model_type': 'model'},
 }
 
 def mock_loader():
@@ -33,7 +33,7 @@ def test_saver():
     mock_model = Model(loader=mock_loader, saver=mock_saver)
     mock_model.load()
 
-    wad = {'name':'foo', 'file':'foo.wad'}
+    wad = {'name':'foo', 'file':'foo.wad', 'model_type': 'model'}
     id = mock_model.create(**wad)
     json_string = mock_model.save(id)
 
@@ -48,7 +48,7 @@ def test_create():
     assert(mock_model.find(id).items() >= wad.items())
 
     wad2 = {'name':'bar', 'file':'bar.wad'}
-    wad2metadata = { 'id': '1234', 'title': 'Bar', 'description': 'This is bar.wad!' }
+    wad2metadata = { 'id': '1234', 'title': 'Bar', 'description': 'This is bar.wad!', 'model_type': 'model' }
     id2 = mock_model.create(**wad2, **wad2metadata)
     case.assertDictEqual(mock_model.find(id2), {**wad2, **wad2metadata})
 
