@@ -24,6 +24,10 @@ class SidebarView:
         def wadtable(): display_widget(root, WidgetIndices.WAD_TABLE)
         self.wadtable_button.clicked.connect(wadtable)
 
+        self.wadtree = root.findChild(QPushButton, 'sidebar_wadsview_tree')
+        def wadtable(): display_widget(root, WidgetIndices.WAD_TREE)
+        self.wadtree.clicked.connect(wadtable)
+
 
     def show_dir(self, path):
         self.wad_dir_model.setRootPath(QDir.currentPath())

@@ -1,4 +1,5 @@
 import uuid
+from core.utils.strings import snake_casify
 
 class Model:
     def __init__(self, **io):
@@ -19,8 +20,8 @@ class Model:
         return [obj for obj in self.objects.values()]
 
     def create(self, **kwargs):
-        id = str(uuid.uuid1()) if not 'id' in kwargs else kwargs['id']
-        self.objects[id] = { 'id': id, **kwargs }
+        id = str(uuid.uuid1()) if not 'id' in kwargs else str(kwargs['id'])
+        self.objects[id] = { **kwargs, 'id': id, 'model_type': snake_casify(self.__class__.__name__) }
 
         return id
 

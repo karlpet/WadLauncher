@@ -150,6 +150,13 @@
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QPushButton" name="sidebar_wadsview_tree">
+             <property name="text">
+              <string>Category Viewer</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
          <item>

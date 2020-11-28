@@ -7,6 +7,7 @@ class WidgetIndices:
     IDGAMES_DETAIL = 0
     WELCOME = 0
     WAD_TABLE = 0
+    WAD_TREE = 0
 
 def add_widget(root, widget, widget_index):
     main_stack = root.findChild(QStackedWidget, 'main_stack')
