@@ -1,45 +1,16 @@
 from PyQt5 import uic
 from PyQt5.QtWidgets import QTableView, QLineEdit
-from PyQt5.QtCore import Qt, QAbstractTableModel, QModelIndex, QItemSelectionModel, QSortFilterProxyModel
+from PyQt5.QtCore import Qt, QModelIndex, QItemSelectionModel, QSortFilterProxyModel
+from PyQt5.QtGui import QStandardItemModel, QStandardItem
 
 from app.AppContext import AppContext
 from app.helpers.StackedWidgetSelector import add_widget
+from app.helpers.WadItemFactory import make_wad_item, DATA_ROLE
 
 template_path = AppContext.Instance().get_resource('template/wadtable.ui')
 Form, Base = uic.loadUiType(template_path)
 
-class WadTableModel(QAbstractTableModel):
-    def __init__(self, wads):
-        super(self.__class__, self).__init__()
-        self.wads = wads
-        self.__wads = wads.all()
-        self.keys = ['Title', 'Filename', 'Author', 'Date', 'Rating']
-
-    def data(self, index, role=Qt.DisplayRole):
-        wad = self.__wads[index.row()]
-
-        if role == Qt.DisplayRole:
-            key = self.keys[index.column()].lower()
-            if key == 'title':
-                return wad.get(key) or wad['name']
-            return wad.get(key) or 'unknown'
-        if role == Qt.UserRole:
-            return wad['id']
-
-    def append(self, wad):
-        self.beginResetModel()
-        self.__wads.append(wad)
-        self.endResetModel()
-
-    def headerData(self, section, orientation, role=Qt.DisplayRole):
-        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
-            return self.keys[section]
-
-    def rowCount(self, index):
-        return len(self.__wads)
-    
-    def columnCount(self, index):
-        return len(self.keys)
+TABLE_ITEM_FLAGS = Qt.ItemIsSelectable | Qt.ItemIsEnabled
 
 class WadTableSortFilterProxyModel(QSortFilterProxyModel):
     def __init__(self, parent=None):
@@ -49,7 +20,7 @@ class WadTableSortFilterProxyModel(QSortFilterProxyModel):
 
     def filterAcceptsRow(self, source_row, source_parent):
         model = self.sourceModel()
-        num_columns = model.columnCount(source_row)
+        num_columns = model.columnCount()
 
         def get_index(i): return model.index(source_row, i, source_parent)
         def get_header(i): return model.headerData(i, Qt.Horizontal).lower()
@@ -77,10 +48,11 @@ class WadTableView(Base, Form):
 
         self.setupUi(self)
         add_widget(root, self, 'WAD_TABLE')
-        
+
         self.wads = wads
         self.proxy = WadTableSortFilterProxyModel(root)
-        self.proxy.setSourceModel(WadTableModel(wads))
+        self.wadtable_model = QStandardItemModel()
+        self.proxy.setSourceModel(self.wadtable_model)
 
         self.wadtable = self.findChild(QTableView, 'wadtable')
         self.wadtable.setModel(self.proxy)
@@ -90,11 +62,29 @@ class WadTableView(Base, Form):
         self.wadtable_filter = self.findChild(QLineEdit, 'wadtable_filter')
         self.wadtable_filter.textChanged.connect(self.proxy.setFilterFixedString)
 
+        self.keys = ['title', 'filename', 'author', 'date', 'rating']
+        self.wadtable_model.setHorizontalHeaderLabels([key.capitalize() for key in self.keys])
+
+        self.import_wads(wads.all())
+
     def select_item(self, selection):
+        if len(selection.indexes()) == 0:
+            return
+
         index = selection.indexes()[0]
-        id = self.wadtable.model().data(index, Qt.UserRole)
+        wad = self.wadtable.model().data(index, DATA_ROLE)
 
-        self.wads.select_wad(id)
+        self.wads.select_wad(wad['id'])
 
-    def add_wad(self, wad):
-        self.wadtable.model().sourceModel().append(wad)
+    def add_item(self, wad):
+        item = make_wad_item(wad, TABLE_ITEM_FLAGS)
+        def make_column_item(wad, key):
+            return QStandardItem(wad.get(key) or 'unknown')
+        column_items = [make_column_item(wad, key) for key in self.keys[1:]]
+        items = [item, *column_items]
+
+        self.wadtable_model.appendRow(items)
+
+    def import_wads(self, wads):
+        for wad in wads:
+            self.add_item(wad)

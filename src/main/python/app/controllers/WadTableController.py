@@ -12,6 +12,6 @@ class WadTableController:
         action, data = msg
 
         if (action == 'CREATE_WAD'):
-            self.view.add_wad(self.wads.find(data))
+            self.view.add_item(self.wads.find(data))
 
 sys.modules[__name__] = WadTableController()

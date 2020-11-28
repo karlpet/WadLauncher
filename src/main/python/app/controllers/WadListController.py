@@ -16,6 +16,6 @@ class WadListController:
         action, data = msg
 
         if (action == 'CREATE_WAD'):
-            self.view.update_list(self.wads.find(data))
+            self.view.add_item(self.wads.find(data))
 
 sys.modules[__name__] = WadListController()

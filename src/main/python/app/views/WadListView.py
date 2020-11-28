@@ -1,52 +1,41 @@
 from PyQt5.QtWidgets import QListView, QAbstractItemView
-from PyQt5.QtCore import Qt, QAbstractListModel
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QStandardItemModel
 
 from app.helpers.StackedWidgetSelector import widget_changed, WidgetIndices
+from app.helpers.WadItemFactory import make_wad_item, DATA_ROLE
 
-class WadListViewModel(QAbstractListModel):
-    def __init__(self, wads = [], parent=None):
-        QAbstractListModel.__init__(self, parent)
-        self.__wads = wads
-
-    def rowCount(self, parent):
-        return len(self.__wads)
-
-    def data(self, index, role):
-        if role == Qt.DisplayRole:
-            wad = self.__wads[index.row()]
-
-            return wad.get('title') or wad.get('name')
-        if role == Qt.UserRole:
-            return self.__wads[index.row()].get('id')
-
-    def append(self, wad):
-        self.beginResetModel()
-        self.__wads.append(wad)
-        self.endResetModel()
+LIST_ITEM_FLAGS = Qt.ItemIsSelectable | Qt.ItemIsEnabled
 
 class WadListView:
     def __init__(self, root, wads):
-        self.wad_list = root.findChild(QListView, 'wad_list')
+        self.wadlist = root.findChild(QListView, 'wad_list')
         self.wads = wads
-
-        self.wad_list.setSelectionMode(QAbstractItemView.SingleSelection)
-        self.wad_list_view_model = WadListViewModel(wads.all())
-        self.wad_list.setModel(self.wad_list_view_model)
-        self.wad_list.selectionModel().selectionChanged.connect(self.select_item)
+        self.wadlist_model = QStandardItemModel()
+        self.wadlist.setModel(self.wadlist_model)
+        self.wadlist.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.wadlist.selectionModel().selectionChanged.connect(self.select_item)
+        self.import_wads(wads.all())
 
         widget_changed(root, self.on_widget_change)
 
     def on_widget_change(self, widget_index):
-        if widget_index == WidgetIndices.WAD_TABLE:
-            self.wad_list.hide()
+        if widget_index in [WidgetIndices.WAD_TABLE, WidgetIndices.WAD_TREE]:
+            self.wadlist.hide()
         else:
-            self.wad_list.show()
+            self.wadlist.show()
 
     def select_item(self, selection):
         index = selection.indexes()[0]
-        id = self.wad_list_view_model.data(index, Qt.UserRole)
+        item = self.wadlist_model.data(index, DATA_ROLE)
 
-        self.wads.select_wad(id)
+        self.wads.select_wad(item['id'])
 
-    def update_list(self, wad):
-        self.wad_list_view_model.append(wad)
+    def add_item(self, wad):
+        item = make_wad_item(wad, LIST_ITEM_FLAGS)
+
+        self.wadlist_model.appendRow(item)
+
+    def import_wads(self, wads):
+        for wad in wads:
+            self.add_item(wad)
