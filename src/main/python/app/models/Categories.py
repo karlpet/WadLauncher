@@ -5,35 +5,27 @@ from core.base.Model import Model
 from app.config import Config
 from configparser import ConfigParser
 
+config = Config.Instance()
+BASE_PATH = os.path.expanduser(config['PATHS']['BASE_PATH'])
+CATEGORIES_INI_FILE = 'user_categories.ini'
+CATEGORIES_INI_PATH = os.path.join(BASE_PATH, CATEGORIES_INI_FILE)
+
+CATEGORIES_CONFIG = ConfigParser(allow_no_value=True)
+CATEGORIES_CONFIG.read(CATEGORIES_INI_PATH)
+
 def load_categories():
-    config = Config.Instance()
-    BASE_PATH = os.path.expanduser(config['PATHS']['BASE_PATH'])
-    CATEGORIES_INI_FILE = 'user_categories.ini'
-    CATEGORIES_INI_PATH = os.path.join(BASE_PATH, CATEGORIES_INI_FILE)
-
-    categories_config = ConfigParser(allow_no_value=True)
-    categories_config.read(CATEGORIES_INI_PATH)
-
-    return [dict(categories_config[c]) for c in categories_config.sections()]
+    return [dict(CATEGORIES_CONFIG[c]) for c in CATEGORIES_CONFIG.sections()]
 
 def save_category(category):
-    config = Config.Instance()
-    BASE_PATH = os.path.expanduser(config['PATHS']['BASE_PATH'])
-    CATEGORIES_INI_FILE = 'user_categories.ini'
-    CATEGORIES_INI_PATH = os.path.join(BASE_PATH, CATEGORIES_INI_FILE)
-
-    categories_config = ConfigParser(allow_no_value=True)
-    categories_config.read(CATEGORIES_INI_PATH)
-
     category_id = category['id']
-    if category_id not in categories_config.sections():
-        categories_config.add_section(category_id)
+    if category_id not in CATEGORIES_CONFIG.sections():
+        CATEGORIES_CONFIG.add_section(category_id)
     
     for key, val in category.items():
-        categories_config.set(category_id, key, val)
+        CATEGORIES_CONFIG.set(category_id, key, val)
 
     with open(CATEGORIES_INI_PATH, 'w+') as categories_file:
-        categories_config.write(categories_file)
+        CATEGORIES_CONFIG.write(categories_file)
 
 class Categories(Model):
     def __init__(self):
@@ -41,18 +33,10 @@ class Categories(Model):
         self.load()
     
     def remove(self, id):
-        config = Config.Instance()
-        BASE_PATH = os.path.expanduser(config['PATHS']['BASE_PATH'])
-        CATEGORIES_INI_FILE = 'user_categories.ini'
-        CATEGORIES_INI_PATH = os.path.join(BASE_PATH, CATEGORIES_INI_FILE)
-
-        categories_config = ConfigParser(allow_no_value=True)
-        categories_config.read(CATEGORIES_INI_PATH)
-
         self.delete(id)
-        categories_config.remove_section(id)
+        CATEGORIES_CONFIG.remove_section(id)
 
         with open(CATEGORIES_INI_PATH, 'w+') as categories_file:
-            categories_config.write(categories_file)
+            CATEGORIES_CONFIG.write(categories_file)
 
 sys.modules[__name__] = Categories()
