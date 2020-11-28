@@ -8,7 +8,7 @@ from collections import deque
 from app.AppContext import AppContext
 from app.helpers.StackedWidgetSelector import add_widget
 from app.helpers.ContextMenuFactory import make_context_menu
-from app.views.widgets.DeselectableTreeView import DeselectableTreeView
+from app.views.widgets.promoted.DeselectableTreeView import DeselectableTreeView
 
 template_path = AppContext.Instance().get_resource('template/wadtree.ui')
 Form, Base = uic.loadUiType(template_path)

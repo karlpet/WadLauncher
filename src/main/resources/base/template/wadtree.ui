@@ -39,7 +39,7 @@
   <customwidget>
    <class>DeselectableTreeView</class>
    <extends>QTreeView</extends>
-   <header>app/views/widgets/DeselectableTreeView.h</header>
+   <header>app/views/widgets/promoted/DeselectableTreeView.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
