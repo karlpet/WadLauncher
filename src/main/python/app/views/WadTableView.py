@@ -26,6 +26,11 @@ class WadTableModel(QAbstractTableModel):
         if role == Qt.UserRole:
             return wad['id']
 
+    def append(self, wad):
+        self.beginResetModel()
+        self.__wads.append(wad)
+        self.endResetModel()
+
     def headerData(self, section, orientation, role=Qt.DisplayRole):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
             return self.keys[section]
@@ -90,3 +95,6 @@ class WadTableView(Base, Form):
         id = self.wadtable.model().data(index, Qt.UserRole)
 
         self.wads.select_wad(id)
+
+    def add_wad(self, wad):
+        self.wadtable.model().sourceModel().append(wad)
