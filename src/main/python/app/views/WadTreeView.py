@@ -16,7 +16,7 @@ Form, Base = uic.loadUiType(template_path)
 DATA_ROLE = Qt.UserRole + 1
 
 class WadTreeView(Base, Form):
-    def __init__(self, root, models, parent=None):
+    def __init__(self, root, models, controller, parent=None):
         super(self.__class__, self).__init__(parent)
 
         self.setupUi(self)
@@ -24,23 +24,24 @@ class WadTreeView(Base, Form):
 
         self.wads = models.wads
         self.categories = models.categories
+        self.controller = controller
+
+        self.wadtree_model = QStandardItemModel()
+        self.wadtree_model.itemChanged.connect(self.internal_move)
+        self.selected_index = None
 
         self.wadtree = self.findChild(DeselectableTreeView, 'wadtree')
         self.wadtree.setDragEnabled(True)
         self.wadtree.viewport().setAcceptDrops(True)
         self.wadtree.setDropIndicatorShown(True)
         self.wadtree.setDragDropMode(QAbstractItemView.InternalMove)
-
-        self.wadtree_model = QStandardItemModel()
-        self.wadtree_model.itemChanged.connect(self.internal_move)
-        self.selected_index = None
-
         self.wadtree.setModel(self.wadtree_model)
-        self.importData(self.categories.all() + self.wads.all())
-        self.wadtree.expandAll()
         self.wadtree.selectionModel().selectionChanged.connect(self.select_tree_index)
         self.wadtree.setContextMenuPolicy(Qt.CustomContextMenu)
         self.wadtree.customContextMenuRequested.connect(self.open_menu)
+        
+        self.importData(self.categories.all() + self.wads.all())
+        self.wadtree.expandAll()
 
     def internal_move(self, item):
         model_item = item.data(DATA_ROLE)
@@ -67,7 +68,17 @@ class WadTreeView(Base, Form):
             model.save(id)
 
     def open_menu(self, pos):
-        execute_menu = make_context_menu(self, { 'add': self.add_category })
+        menu_actions = { 'add Category': self.add_category }
+        index = self.selected_index
+
+        if index != None:
+            item = self.wadtree_model.itemFromIndex(index)
+            item_data = item.data(DATA_ROLE)
+            if item_data['model_type'] == 'categories':
+                def remove_action(): self.remove_category(item)
+                menu_actions['Remove category (' + item_data['name'] + ')'] = remove_action
+
+        execute_menu = make_context_menu(self, menu_actions)
         execute_menu(pos)
 
     def add_category(self):
@@ -92,6 +103,24 @@ class WadTreeView(Base, Form):
         item = self.create_row(self.categories.find(id))
         parent.appendRow(item)
         self.categories.save(id)
+    
+    def remove_category(self, item):
+        index = item.index()
+        parent_item = self.wadtree_model.invisibleRootItem()
+        parent_index = index.parent()
+        parent_id = None
+        if parent_index.isValid():
+            parent_item = self.wadtree_model.itemFromIndex(parent_index)
+            parent_id = parent_item.data(DATA_ROLE)['id']
+        children = []
+        for row in range(item.rowCount()):
+            child = item.takeChild(row)
+            parent_item.appendRow(child)
+            children.append(child.data(DATA_ROLE))
+
+        item_data = item.data(DATA_ROLE)
+        self.controller.remove_category(item_data, children)
+        parent_item.removeRow(item.row())
 
     def select_tree_index(self, selection):
         if len(selection.indexes()) == 0:

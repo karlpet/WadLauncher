@@ -39,5 +39,20 @@ class Categories(Model):
     def __init__(self):
         Model.__init__(self, loader=load_categories, saver=save_category)
         self.load()
+    
+    def remove(self, id):
+        config = Config.Instance()
+        BASE_PATH = os.path.expanduser(config['PATHS']['BASE_PATH'])
+        CATEGORIES_INI_FILE = 'user_categories.ini'
+        CATEGORIES_INI_PATH = os.path.join(BASE_PATH, CATEGORIES_INI_FILE)
+
+        categories_config = ConfigParser(allow_no_value=True)
+        categories_config.read(CATEGORIES_INI_PATH)
+
+        self.delete(id)
+        categories_config.remove_section(id)
+
+        with open(CATEGORIES_INI_PATH, 'w+') as categories_file:
+            categories_config.write(categories_file)
 
 sys.modules[__name__] = Categories()
