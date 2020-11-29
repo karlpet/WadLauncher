@@ -6,12 +6,13 @@ from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from app.AppContext import AppContext
 from app.helpers.StackedWidgetSelector import add_widget
 from app.helpers.ContextMenuFactory import make_context_menu
+from app.helpers.WadItemFactory import make_wad_item, DATA_ROLE
 from app.views.widgets.promoted.DeselectableTreeView import DeselectableTreeView
 
 template_path = AppContext.Instance().get_resource('template/wadtree.ui')
 Form, Base = uic.loadUiType(template_path)
 
-DATA_ROLE = Qt.UserRole + 1
+TREE_WAD_FLAGS = Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsDragEnabled | Qt.ItemNeverHasChildren
 
 class WadTreeView(Base, Form):
     def __init__(self, root, models, controller, parent=None):
@@ -25,8 +26,13 @@ class WadTreeView(Base, Form):
         self.controller = controller
 
         self.wadtree_model = QStandardItemModel()
+        # When moving an item in the tree, you will need to update the parent of the source
+        # As well as the parent of the destination. Luckily, we can use same code.
         self.wadtree_model.rowsRemoved.connect(self.update_parent, type=Qt.QueuedConnection)
         self.wadtree_model.rowsInserted.connect(self.update_parent, type=Qt.QueuedConnection)
+
+        # This stupid itemChanged signal will call when the tree is reordered as well.
+        # We use this signal for text changing anyway.
         self.wadtree_model.itemChanged.connect(self.maybe_text_change, type=Qt.QueuedConnection)
 
         self.wadtree = self.findChild(QTreeView, 'wadtree')
@@ -41,13 +47,19 @@ class WadTreeView(Base, Form):
 
         root_category = self.categories.find_by(is_root='yes')
         self.is_importing = True
+        self.appended_wads = []
         self.recursive_import(root_category)
+        for wad in self.wads.all():
+            if wad['id'] not in self.appended_wads:
+                self.wadtree_model.invisibleRootItem().appendRow(self.create_row(wad))
         AppContext.Instance().app.processEvents()
         self.is_importing = False
         self.wadtree.expandAll()
 
     def maybe_text_change(self, item):
         item_data = item.data()
+        if item_data['model_type'] == 'wads':
+            return
         item_text = item.text()
         if item_text != item_data['name']:
             id = item_data['id']
@@ -76,8 +88,18 @@ class WadTreeView(Base, Form):
             root_item.setData(root, DATA_ROLE)
         else:
             root_item = self.create_row(root)
-        for child_id in root['children']:
-            child = self.categories.find(child_id)
+        for child_id in root.get('children', []):
+            child = None
+            try:
+                child = self.categories.find(child_id)
+            except KeyError:
+                try:
+                    child = self.wads.find(child_id)
+                    self.appended_wads.append(child_id)
+                except KeyError:
+                    # Id is probably missing, item probably removed outside of app
+                    # This is fine, the tree will get updated soon enough
+                    continue
             root_item.appendRow(self.recursive_import(child))
         return root_item
 
@@ -98,9 +120,8 @@ class WadTreeView(Base, Form):
                 wad_string = item_data.get('title') or item_data.get('name')
                 remove_wad_string = 'Remove ({})'.format(wad_string)
                 def remove_wad():
-                    pass
-                    # self.wadtree_model.removeRow(item.row())
-                    # self.controller.remove_wad(item_data)
+                    self.wadtree_model.removeRow(item.row())
+                    self.controller.remove_wad(item_data)
                 menu_actions[remove_wad_string] = remove_wad
 
         execute_menu = make_context_menu(self, menu_actions)
@@ -132,15 +153,15 @@ class WadTreeView(Base, Form):
         parent_item.removeRow(item.row())
         self.controller.remove_category(item_data)
 
-    # def add_wad(self, wad):
-    #     item = self.create_row(wad)
-    #     self.wadtree_model.invisibleRootItem().appendRow(item)
+    def add_wad(self, wad):
+        item = self.create_row(wad)
+        self.wadtree_model.invisibleRootItem().appendRow(item)
 
-    # def remove_wad(self, wad):
-    #     for row in range(self.wadtree_model.rowCount()):
-    #         item = self.wadtree_model.item(row)
-    #         if item and item.data(DATA_ROLE)['id'] == wad['id']:
-    #             self.wadtree_model.removeRow(row)
+    def remove_wad(self, wad):
+        for row in range(self.wadtree_model.rowCount()):
+            item = self.wadtree_model.item(row)
+            if item and item.data()['id'] == wad['id']:
+                self.wadtree_model.removeRow(row)
 
     def select_tree_index(self, selection):
         if len(selection.indexes()) == 0:
@@ -151,13 +172,12 @@ class WadTreeView(Base, Form):
             self.wads.select_wad(item.data()['id'])
 
     def create_row(self, model_item):
-        item = QStandardItem(model_item['name'])
-        item.setData(model_item, DATA_ROLE)
         if model_item['model_type'] == 'categories':
+            item = QStandardItem(model_item['name'])
+            item.setData(model_item, DATA_ROLE)
             nameItemFont = item.font()
             nameItemFont.setBold(True)
             item.setFont(nameItemFont)
+            return item
         if model_item['model_type'] == 'wads':
-            flags = Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsDragEnabled | Qt.ItemNeverHasChildren
-            item.setFlags(flags)
-        return item
+            return make_wad_item(model_item, TREE_WAD_FLAGS)
