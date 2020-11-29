@@ -128,10 +128,20 @@ class WadTreeView(Base, Form):
         execute_menu(pos)
 
     def add_category(self, index):
-        item = self.wadtree_model.invisibleRootItem()
-        if index.isValid():
-            item = self.wadtree_model.itemFromIndex(index)
-
+        item = None
+        try:
+            maybe_item = self.wadtree_model.itemFromIndex(index)
+            maybe_item_data = maybe_item.data()
+            if maybe_item_data['model_type'] == 'categories':
+                item = maybe_item
+            elif maybe_item_data['model_type'] == 'wads':
+                parent_index = index.parent()
+                if parent_index.isValid():
+                    item = self.wadtree_model.itemFromIndex(parent_index)
+                else:
+                    item = self.wadtree_model.invisibleRootItem()
+        except Exception:
+            item = self.wadtree_model.invisibleRootItem()
         child_id = self.categories.create(name='new category', children=[])
         self.categories.save(child_id)
         child_data = self.categories.find(child_id)
