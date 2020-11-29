@@ -182,7 +182,7 @@ class WadTreeView(Base, Form):
             return
         index = selection.indexes()[0]
         item = self.wadtree_model.itemFromIndex(index)
-        if item.data()['model_type'] == 'wad':
+        if item.data()['model_type'] == 'wads':
             self.wads.select_wad(item.data()['id'])
 
     def create_row(self, model_item):
