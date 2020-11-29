@@ -106,7 +106,7 @@ class WadTreeView(Base, Form):
     def open_menu(self, pos):
         index = self.wadtree.indexAt(pos)
         def add_category(): self.add_category(index)
-        menu_actions = { 'Add Category': add_category }
+        menu_actions = [('Add Category', add_category)]
 
         if index.isValid():
             item = self.wadtree_model.itemFromIndex(index)
@@ -115,14 +115,14 @@ class WadTreeView(Base, Form):
                 def remove_category():
                     self.remove_category(index)
                 remove_category_str = 'Remove category ({})'.format(item_data['name'])
-                menu_actions[remove_category_str] = remove_category
+                menu_actions.append((remove_category_str, remove_category))
             elif item_data['model_type'] == 'wads':
                 wad_string = item_data.get('title') or item_data.get('name')
                 remove_wad_string = 'Remove ({})'.format(wad_string)
                 def remove_wad():
                     self.wadtree_model.removeRow(item.row())
                     self.controller.remove_wad(item_data)
-                menu_actions[remove_wad_string] = remove_wad
+                menu_actions.append((remove_wad_string, remove_wad))
 
         execute_menu = make_context_menu(self, menu_actions)
         execute_menu(pos)

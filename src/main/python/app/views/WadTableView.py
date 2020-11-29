@@ -84,7 +84,7 @@ class WadTableView(Base, Form):
         def remove_wad():
             self.wadtable_model.removeRow(self.selected_item.row())
             self.controller.remove_wad(item)
-        menu_actions = { remove_wad_string: remove_wad }
+        menu_actions = [(remove_wad_string, remove_wad)]
 
         execute_menu = make_context_menu(self.wadtable, menu_actions)
         execute_menu(pos)

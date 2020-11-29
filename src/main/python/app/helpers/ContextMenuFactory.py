@@ -4,7 +4,7 @@ def make_context_menu(root, menu_items):
     menu = QMenu(root)
 
     callbacks_dict = {}
-    for title, callback in menu_items.items():
+    for title, callback in menu_items:
         menu_action = menu.addAction(title)
         callbacks_dict[menu_action] = callback
 
