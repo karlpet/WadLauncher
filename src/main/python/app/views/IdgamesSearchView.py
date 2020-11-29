@@ -17,7 +17,7 @@ class IdgamesSearchView(Base, Form):
         self.setupUi(self)
         add_widget(root, self, 'IDGAMES_SEARCH')
 
-        self.searchbar = SearchBar(self, controller)
+        self.searchbar = SearchBar(root, controller)
         self.controller = controller
 
         self.search_results_container = self.findChild(QScrollArea, 'idgames_search_results_container')
