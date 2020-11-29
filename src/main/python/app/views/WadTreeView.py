@@ -3,8 +3,6 @@ from PyQt5.QtWidgets import QTreeView, QAbstractItemView
 from PyQt5.QtCore import Qt, QVariant
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 
-from collections import deque
-
 from app.AppContext import AppContext
 from app.helpers.StackedWidgetSelector import add_widget
 from app.helpers.ContextMenuFactory import make_context_menu
@@ -27,8 +25,9 @@ class WadTreeView(Base, Form):
         self.controller = controller
 
         self.wadtree_model = QStandardItemModel()
-        self.wadtree_model.itemChanged.connect(self.internal_move)
-        self.selected_index = None
+        self.wadtree_model.rowsRemoved.connect(self.update_parent, type=Qt.QueuedConnection)
+        self.wadtree_model.rowsInserted.connect(self.update_parent, type=Qt.QueuedConnection)
+        self.wadtree_model.itemChanged.connect(self.maybe_text_change, type=Qt.QueuedConnection)
 
         self.wadtree = self.findChild(QTreeView, 'wadtree')
         self.wadtree.setDragEnabled(True)
@@ -39,145 +38,118 @@ class WadTreeView(Base, Form):
         self.wadtree.selectionModel().selectionChanged.connect(self.select_tree_index)
         self.wadtree.setContextMenuPolicy(Qt.CustomContextMenu)
         self.wadtree.customContextMenuRequested.connect(self.open_menu)
-        
-        self.importData(self.categories.all() + self.wads.all())
+
+        root_category = self.categories.find_by(is_root='yes')
+        self.is_importing = True
+        self.recursive_import(root_category)
+        AppContext.Instance().app.processEvents()
+        self.is_importing = False
         self.wadtree.expandAll()
 
-    def internal_move(self, item):
-        model_item = item.data(DATA_ROLE)
-        id = model_item['id']
-        model_type = model_item['model_type']
-
-        display_name = item.data(Qt.DisplayRole)
-        if model_type == 'categories' and model_item['name'] != display_name:
-            self.categories.update(id, name=display_name)
+    def maybe_text_change(self, item):
+        item_data = item.data()
+        item_text = item.text()
+        if item_text != item_data['name']:
+            id = item_data['id']
+            self.categories.update(id, name=item_text)
             self.categories.save(id)
+
+    def update_parent(self, index, *_):
+        if self.is_importing:
             return
-
-        new_category_id = None
-        index = item.index()
-        parent_index = index.parent()
-
-        if parent_index.isValid():
-            parent = self.wadtree_model.itemFromIndex(parent_index)
-            new_category_id = parent.data(DATA_ROLE)['id']
+        AppContext.Instance().app.processEvents()
+        parent = self.wadtree_model.invisibleRootItem()
+        if index.isValid():
+            parent = index.model().itemFromIndex(index)
         
-        if new_category_id != model_item.get('category_id'):
-            model = getattr(self, model_type)
-            model.update(id, category_id=new_category_id)
-            model.save(id)
+        def get_child(i): return parent.child(i).data()['id']
+        children = [get_child(i) for i in range(parent.rowCount())]
+
+        parent_id = parent.data(DATA_ROLE)['id']
+        self.categories.update(parent_id, children=children)
+        self.categories.save(parent_id)
+
+    def recursive_import(self, root):
+        root_item = None
+        if root.get('is_root') == 'yes':
+            root_item = self.wadtree_model.invisibleRootItem()
+            root_item.setData(root, DATA_ROLE)
+        else:
+            root_item = self.create_row(root)
+        for child_id in root['children']:
+            child = self.categories.find(child_id)
+            root_item.appendRow(self.recursive_import(child))
+        return root_item
 
     def open_menu(self, pos):
-        menu_actions = { 'add Category': self.add_category }
-        index = self.selected_index
+        index = self.wadtree.indexAt(pos)
+        def add_category(): self.add_category(index)
+        menu_actions = { 'Add Category': add_category }
 
-        if index != None:
+        if index.isValid():
             item = self.wadtree_model.itemFromIndex(index)
             item_data = item.data(DATA_ROLE)
             if item_data['model_type'] == 'categories':
-                def remove_action(): self.remove_category(item)
-                menu_actions['Remove category (' + item_data['name'] + ')'] = remove_action
+                def remove_category():
+                    self.remove_category(index)
+                remove_category_str = 'Remove category ({})'.format(item_data['name'])
+                menu_actions[remove_category_str] = remove_category
             elif item_data['model_type'] == 'wads':
                 wad_string = item_data.get('title') or item_data.get('name')
                 remove_wad_string = 'Remove ({})'.format(wad_string)
                 def remove_wad():
-                    self.wadtree_model.removeRow(item.row())
-                    self.controller.remove_wad(item_data)
+                    pass
+                    # self.wadtree_model.removeRow(item.row())
+                    # self.controller.remove_wad(item_data)
                 menu_actions[remove_wad_string] = remove_wad
 
         execute_menu = make_context_menu(self, menu_actions)
         execute_menu(pos)
 
-    def add_category(self):
-        id = self.categories.create(name='new category', category_id=None)
+    def add_category(self, index):
+        item = self.wadtree_model.invisibleRootItem()
+        if index.isValid():
+            item = self.wadtree_model.itemFromIndex(index)
 
-        parent = None
-        if self.selected_index != None:
-            item = self.wadtree_model.itemFromIndex(self.selected_index)
-            item_data = item.data(DATA_ROLE)
-            if item_data['model_type'] == 'categories':
-                parent = item
-            else:
-                parent_index = self.selected_index.parent()
-                if parent_index.isValid():
-                    parent = self.wadtree_model.itemFromIndex(parent_index)
-        if parent:
-            parent_data = parent.data(DATA_ROLE)
-            self.categories.update(id, category_id=parent_data['id'])
-        else:
-            parent = self.wadtree_model.invisibleRootItem()
-        
-        item = self.create_row(self.categories.find(id))
-        parent.appendRow(item)
-        self.categories.save(id)
+        child_id = self.categories.create(name='new category', children=[])
+        self.categories.save(child_id)
+        child_data = self.categories.find(child_id)
+        new_child = self.create_row(child_data)
+        item.appendRow(new_child)
     
-    def remove_category(self, item):
-        index = item.index()
+    def remove_category(self, index):
+        if not index.isValid():
+            return
+        item = self.wadtree_model.itemFromIndex(index)
         parent_item = self.wadtree_model.invisibleRootItem()
         parent_index = index.parent()
-        parent_id = None
         if parent_index.isValid():
             parent_item = self.wadtree_model.itemFromIndex(parent_index)
-            parent_id = parent_item.data(DATA_ROLE)['id']
-        children = []
         for row in range(item.rowCount()):
             child = item.takeChild(row)
             parent_item.appendRow(child)
-            children.append(child.data(DATA_ROLE))
-
         item_data = item.data(DATA_ROLE)
-        self.controller.remove_category(item_data, children)
         parent_item.removeRow(item.row())
+        self.controller.remove_category(item_data)
 
-    def add_wad(self, wad):
-        item = self.create_row(wad)
-        self.wadtree_model.invisibleRootItem().appendRow(item)
+    # def add_wad(self, wad):
+    #     item = self.create_row(wad)
+    #     self.wadtree_model.invisibleRootItem().appendRow(item)
 
-    def remove_wad(self, wad):
-        for row in range(self.wadtree_model.rowCount()):
-            item = self.wadtree_model.item(row)
-            if item and item.data(DATA_ROLE)['id'] == wad['id']:
-                self.wadtree_model.removeRow(row)
-
+    # def remove_wad(self, wad):
+    #     for row in range(self.wadtree_model.rowCount()):
+    #         item = self.wadtree_model.item(row)
+    #         if item and item.data(DATA_ROLE)['id'] == wad['id']:
+    #             self.wadtree_model.removeRow(row)
 
     def select_tree_index(self, selection):
         if len(selection.indexes()) == 0:
-            self.selected_index = None
             return
-        self.selected_index = selection.indexes()[0]
-        parent = self.selected_index.parent()
+        index = selection.indexes()[0]
+        item = self.wadtree_model.itemFromIndex(index)
+        if item.data()['model_type'] == 'wad':
+            self.wads.select_wad(item.data()['id'])
 
-        selected_data = self.get_data_from_index(self.selected_index)
-        if selected_data['model_type'] == 'wads':
-            self.wads.select_wad(selected_data['id'])
-    
-    def get_data_from_index(self, index):
-        item = index.model().itemFromIndex(index)
-
-        return item.data(DATA_ROLE)
-
-    def importData(self, data, root=None):
-        self.wadtree_model.setRowCount(0)
-        if root is None:
-            root = self.wadtree_model.invisibleRootItem()
-        seen = {}
-        values = deque(data)
-        while values:
-            value = values.popleft()
-            if value.get('category_id') == None:
-                parent = root
-            else:
-                pid = value.get('category_id')
-                if pid not in seen:
-                    values.append(value)
-                    continue
-                parent = seen[pid]
-
-            id = value['id']
-            item = self.create_row(value)
-            parent.appendRow(item)
-            seen[id] = parent.child(parent.rowCount() - 1)
-        
     def create_row(self, model_item):
         item = QStandardItem(model_item['name'])
         item.setData(model_item, DATA_ROLE)
