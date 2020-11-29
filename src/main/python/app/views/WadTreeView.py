@@ -147,6 +147,10 @@ class WadTreeView(Base, Form):
         child_data = self.categories.find(child_id)
         new_child = self.create_row(child_data)
         item.appendRow(new_child)
+        # Focus new item:
+        AppContext.Instance().app.processEvents()
+        new_child_index = self.wadtree_model.indexFromItem(new_child)
+        self.wadtree.edit(new_child_index)
     
     def remove_category(self, index):
         if not index.isValid():
