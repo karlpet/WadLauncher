@@ -16,12 +16,7 @@ class WadTreeController:
         elif action == 'REMOVE_WAD':
             self.view.remove_wad(data)
 
-    def remove_category(self, category, children):
-        parent_id = category.get('category_id')
-        for child in children:
-            model = getattr(self.models, child['model_type'])
-            model.update(child['id'], category_id=parent_id)
-            model.save(child['id'])
+    def remove_category(self, category):
         self.models.categories.remove(category['id'])
 
     def remove_wad(self, wad):
