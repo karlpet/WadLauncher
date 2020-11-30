@@ -26,14 +26,12 @@ class WadTreeView(Base, Form):
         self.controller = controller
 
         self.wadtree_model = QStandardItemModel()
-        # When moving an item in the tree, you will need to update the parent of the source
-        # As well as the parent of the destination. Luckily, we can use same code.
-        self.wadtree_model.rowsRemoved.connect(self.update_parent, type=Qt.QueuedConnection)
-        self.wadtree_model.rowsInserted.connect(self.update_parent, type=Qt.QueuedConnection)
 
-        # This stupid itemChanged signal will call when the tree is reordered as well.
-        # We use this signal for text changing anyway.
-        self.wadtree_model.itemChanged.connect(self.maybe_text_change, type=Qt.QueuedConnection)
+        self.moving_item = None
+        self.wadtree_model.rowsRemoved.connect(self.row_removed)
+        # rowsInserted does NOT work as it is documented to.
+        # We use itemChanged signal instead.
+        self.wadtree_model.itemChanged.connect(self.text_change_or_row_insert, type=Qt.QueuedConnection)
 
         self.wadtree = self.findChild(QTreeView, 'wadtree')
         self.wadtree.setDragEnabled(True)
@@ -45,10 +43,12 @@ class WadTreeView(Base, Form):
         self.wadtree.setContextMenuPolicy(Qt.CustomContextMenu)
         self.wadtree.customContextMenuRequested.connect(self.open_menu)
 
-        root_category = self.categories.find_by(is_root='yes')
         self.is_importing = True
         self.appended_wads = []
-        self.recursive_import(root_category)
+        root_category = self.categories.find_by(is_root='yes')
+        root_item = self.wadtree_model.invisibleRootItem()
+        root_item.setData(root_category, DATA_ROLE)
+        self.recursive_import(root_item, root_category.get('children', []))
         for wad in self.wads.all():
             if wad['id'] not in self.appended_wads:
                 self.wadtree_model.invisibleRootItem().appendRow(self.create_row(wad))
@@ -56,24 +56,26 @@ class WadTreeView(Base, Form):
         self.is_importing = False
         self.wadtree.expandAll()
 
-    def maybe_text_change(self, item):
+    def text_change_or_row_insert(self, item):
         item_data = item.data()
-        if item_data['model_type'] == 'wads':
-            return
         item_text = item.text()
-        if item_text != item_data['name']:
+        if item_data['model_type'] != 'wads' and item_text != item_data['name']:
             id = item_data['id']
             self.categories.update(id, name=item_text)
             self.categories.save(id)
-
-    def update_parent(self, index, *_):
-        if self.is_importing:
             return
-        AppContext.Instance().app.processEvents()
-        parent = self.wadtree_model.invisibleRootItem()
+        dst_parent = self.wadtree_model.invisibleRootItem()
+        if item.parent():
+            dst_parent = item.parent()
+        self.update_parent(dst_parent)
+
+    def row_removed(self, index, *_):
+        src_parent = self.wadtree_model.invisibleRootItem()
         if index.isValid():
-            parent = index.model().itemFromIndex(index)
-        
+            src_parent = self.wadtree_model.itemFromIndex(index)
+        self.update_parent(src_parent)
+
+    def update_parent(self, parent):
         def get_child(i): return parent.child(i).data()['id']
         children = [get_child(i) for i in range(parent.rowCount())]
 
@@ -81,27 +83,20 @@ class WadTreeView(Base, Form):
         self.categories.update(parent_id, children=children)
         self.categories.save(parent_id)
 
-    def recursive_import(self, root):
-        root_item = None
-        if root.get('is_root') == 'yes':
-            root_item = self.wadtree_model.invisibleRootItem()
-            root_item.setData(root, DATA_ROLE)
-        else:
-            root_item = self.create_row(root)
-        for child_id in root.get('children', []):
+    def recursive_import(self, parent, children):
+        for child_id in children:
             child = None
             try:
                 child = self.categories.find(child_id)
             except KeyError:
                 try:
                     child = self.wads.find(child_id)
-                    self.appended_wads.append(child_id)
+                    self.appended_wads.append(child['id'])
                 except KeyError:
-                    # Id is probably missing, item probably removed outside of app
-                    # This is fine, the tree will get updated soon enough
                     continue
-            root_item.appendRow(self.recursive_import(child))
-        return root_item
+            child_item = self.create_row(child)
+            parent.appendRow(child_item)
+            self.recursive_import(child_item, child.get('children', []))
 
     def open_menu(self, pos):
         index = self.wadtree.indexAt(pos)
