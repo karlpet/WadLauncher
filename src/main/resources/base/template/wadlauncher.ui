@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1062</width>
-    <height>768</height>
+    <height>636</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -37,6 +37,57 @@
         <property name="rightMargin">
          <number>0</number>
         </property>
+        <item>
+         <layout class="QVBoxLayout" name="sidebar_wadsview">
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="label_15">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Choose detailed view</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="sidebar_wadsview_table">
+            <property name="text">
+             <string>Filter and Sort Table</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="sidebar_wadsview_tree">
+            <property name="text">
+             <string>Category Viewer</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QWidget" name="wad_info" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_4"/>
+         </widget>
+        </item>
         <item>
          <widget class="QListView" name="wad_list">
           <property name="sizePolicy">
@@ -132,34 +183,6 @@
           </widget>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="sidebar_wadsview">
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="label_15">
-             <property name="text">
-              <string>Choose detailed view</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="sidebar_wadsview_table">
-             <property name="text">
-              <string>Filter and Sort Table</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="sidebar_wadsview_tree">
-             <property name="text">
-              <string>Category Viewer</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
           <widget class="QLabel" name="sidebar_waddir_label">
            <property name="text">
             <string>Contents of directory</string>
@@ -184,6 +207,16 @@
             <bool>true</bool>
            </property>
           </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Load order</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QListView" name="sidebar_loadorder"/>
          </item>
         </layout>
        </widget>

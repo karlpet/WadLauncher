@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QListView, QAbstractItemView
+from PyQt5.QtWidgets import QWidget, QListView, QAbstractItemView
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QStandardItemModel
 
@@ -14,6 +14,8 @@ class WadListView:
         self.wads = wads
 
         self.wadlist = root.findChild(QListView, 'wad_list')
+        self.wadinfo = root.findChild(QWidget, 'wad_info')
+        self.wadinfo.hide()
         self.selected_item = None
 
         self.wadlist_model = QStandardItemModel()
@@ -30,7 +32,9 @@ class WadListView:
     def on_widget_change(self, widget_index):
         if widget_index in [WidgetIndices.WAD_TABLE, WidgetIndices.WAD_TREE]:
             self.wadlist.hide()
+            self.wadinfo.show()
         else:
+            self.wadinfo.hide()
             self.wadlist.show()
 
     def open_menu(self, pos):
