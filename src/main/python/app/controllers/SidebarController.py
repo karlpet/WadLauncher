@@ -8,11 +8,11 @@ class SidebarController:
 
     def show(self, root, models):
         self.wads = models.wads
-        self.view = SidebarView(root, self)
+        self.view = SidebarView(root, self.wads, self)
         self.root = root
-        self.wads.subscribe(self.wad_listener)
+        self.wads.subscribe(self.subscription)
     
-    def wad_listener(self, args):
+    def subscription(self, args):
         action, data = args
 
         if action == 'SELECT_WAD':
