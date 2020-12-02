@@ -25,14 +25,14 @@ def search_wad_dir(dir):
 
 
 def load_wad(dir):
-    if 'metadata.json' in os.listdir(dir):
-        with open(os.path.join(dir, 'metadata.json'), 'r') as json_file:
-            return json.load(json_file)
     loaded_wad = {
         'name': os.path.basename(dir),
         'path': dir,
         'file_paths': search_wad_dir(dir)
     }
+    if 'metadata.json' in os.listdir(dir):
+        with open(os.path.join(dir, 'metadata.json'), 'r') as json_file:
+            loaded_wad.update(json.load(json_file))
     try:
         loaded_wad.update(file_path=loaded_wad['file_paths'][0])
     except IndexError:
