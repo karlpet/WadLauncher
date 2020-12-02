@@ -20,7 +20,8 @@ class SidebarView:
             self.wad_dir.hideColumn(i)
         
         self.loadorder_model = QStandardItemModel()
-        self.loadorder_model.itemChanged.connect(self.manual_ordering)
+        # rowsRemoved is called when something is moved, AFTER the model actually is updated
+        self.loadorder_model.rowsRemoved.connect(self.manual_ordering)
         self.loadorder = root.findChild(QListView, 'sidebar_loadorder')
         self.loadorder.setModel(self.loadorder_model)
 

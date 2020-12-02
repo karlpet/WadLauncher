@@ -13,10 +13,12 @@ def launch(wad, iwad, source_port):
     Path(wad_save_dir).mkdir(parents=True, exist_ok=True)
 
     executable_path = os.path.join(source_port['dir'], source_port['executable'])
+    files = ' '.join(wad['file_paths'])
+
     process_call = [
         executable_path,
         source_port['wad_arg'],
-        wad['file_path'],
+        files,
         source_port['iwad_arg'],
         iwad['path'],
         source_port['save_arg'],
