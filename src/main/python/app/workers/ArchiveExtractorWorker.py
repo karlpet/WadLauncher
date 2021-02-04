@@ -7,7 +7,6 @@ from app.workers.WorkerPool import *
 
 def archive_extractor_worker_wrapper(file_path, should_remove_archive=False, done_handlers=[]):
     worker = ArchiveExtractorWorker(file_path, should_remove_archive)
-    worker.start()
     for handler in done_handlers:
         worker.done.connect(handler)
 
