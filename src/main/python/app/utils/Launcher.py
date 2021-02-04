@@ -12,6 +12,15 @@ def launch(wad, iwad, source_port):
     wad_save_dir = os.path.join(wad_dir, 'saves')
     Path(wad_save_dir).mkdir(parents=True, exist_ok=True)
 
-    process_call = source_port['template'].format(wad=wad['file_path'], iwad=iwad['path'], save_dir=wad_save_dir)
+    executable_path = os.path.join(source_port['dir'], source_port['executable'])
+    process_call = [
+        executable_path,
+        source_port['wad_arg'],
+        wad['file_path'],
+        source_port['iwad_arg'],
+        iwad['path'],
+        source_port['save_arg'],
+        wad_save_dir,
+    ]
 
-    subprocess.Popen(process_call.split(' '))
+    subprocess.Popen(process_call, cwd=source_port['dir'])
