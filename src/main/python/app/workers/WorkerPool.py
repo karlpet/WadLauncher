@@ -10,7 +10,9 @@ class WorkerPool:
         self.worker_id += 1
         worker_id = self.worker_id
         self.pool[worker_id] = worker
-        worker.finished.connect(lambda: self.remove(worker_id))
+        def finish(): self.remove(worker_id)
+
+        worker.finished.connect(finish)
         worker.start()
     
     def remove(self, worker_id):
