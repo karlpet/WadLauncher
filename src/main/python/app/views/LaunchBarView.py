@@ -1,3 +1,5 @@
+import os
+
 from PyQt5.QtWidgets import QWidget, QLabel, QComboBox, QPushButton
 from app.views.viewmodels.ComboBoxModel import *
 
@@ -33,4 +35,4 @@ class LaunchBarView:
         if wad == None:
             self.selected_wad_name.setText('No wad selected')
         else:
-            self.selected_wad_name.setText(wad.get('title') or wad['name'])
+            self.selected_wad_name.setText((wad.get('title') or wad['name']) + ' ({})'.format(os.path.basename(wad['file_path'])))

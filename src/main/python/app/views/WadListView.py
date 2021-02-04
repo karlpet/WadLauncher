@@ -1,8 +1,8 @@
-from PyQt5.QtWidgets import QListView, QAbstractItemView
+from PyQt5.QtWidgets import QWidget, QListView, QAbstractItemView, QPushButton
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QStandardItemModel
 
-from app.helpers.StackedWidgetSelector import widget_changed, WidgetIndices
+from app.helpers.StackedWidgetSelector import widget_changed, display_widget, WidgetIndices
 from app.helpers.WadItemFactory import make_wad_item, DATA_ROLE
 from app.helpers.ContextMenuFactory import make_context_menu
 
@@ -14,6 +14,8 @@ class WadListView:
         self.wads = wads
 
         self.wadlist = root.findChild(QListView, 'wad_list')
+        self.wadinfo = root.findChild(QWidget, 'wad_info')
+        self.wadinfo.hide()
         self.selected_item = None
 
         self.wadlist_model = QStandardItemModel()
@@ -27,10 +29,20 @@ class WadListView:
         self.import_wads(wads.all())
         widget_changed(root, self.on_widget_change)
 
+        self.wadtable_button = root.findChild(QPushButton, 'sidebar_wadsview_table')
+        def wadtable(): display_widget(root, WidgetIndices.WAD_TABLE)
+        self.wadtable_button.clicked.connect(wadtable)
+
+        self.wadtree = root.findChild(QPushButton, 'sidebar_wadsview_tree')
+        def wadtable(): display_widget(root, WidgetIndices.WAD_TREE)
+        self.wadtree.clicked.connect(wadtable)
+
     def on_widget_change(self, widget_index):
         if widget_index in [WidgetIndices.WAD_TABLE, WidgetIndices.WAD_TREE]:
             self.wadlist.hide()
+            self.wadinfo.show()
         else:
+            self.wadinfo.hide()
             self.wadlist.show()
 
     def open_menu(self, pos):

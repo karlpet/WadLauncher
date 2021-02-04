@@ -3,20 +3,21 @@ from pathlib import Path
 
 from app.config import Config
 
-def launch(wad, iwad, source_port):
+def launch(base_wad, files, iwad, source_port):
     config = Config.Instance()
 
     wads_path = os.path.expanduser(config['PATHS']['WADS_PATH'])
-    wad_dir = os.path.join(wads_path, wad['name'])
+    wad_dir = os.path.join(wads_path, base_wad['name'])
 
     wad_save_dir = os.path.join(wad_dir, 'saves')
     Path(wad_save_dir).mkdir(parents=True, exist_ok=True)
 
     executable_path = os.path.join(source_port['dir'], source_port['executable'])
+
     process_call = [
         executable_path,
         source_port['wad_arg'],
-        wad['file_path'],
+        files,
         source_port['iwad_arg'],
         iwad['path'],
         source_port['save_arg'],

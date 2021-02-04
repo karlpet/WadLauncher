@@ -8,6 +8,7 @@ class LaunchBarController:
         pass
 
     def show(self, root, models):
+        self.wads = models.wads
         self.all_iwads = sorted(models.iwads.all(), key=lambda k: k['name'])
         self.all_source_ports = sorted(models.source_ports.all(), key=lambda k: k['name'])
         self.selected_wad = None
@@ -36,8 +37,11 @@ class LaunchBarController:
         self.selected_source_port = self.all_source_ports[index]
 
     def launch_wad_press(self):
-        Launcher.launch(self.selected_wad,
-                        self.selected_iwad,
-                        self.selected_source_port)
+        Launcher.launch(
+            self.selected_wad,
+            self.wads.load_ordered_files,
+            self.selected_iwad,
+            self.selected_source_port
+        )
 
 sys.modules[__name__] = LaunchBarController()

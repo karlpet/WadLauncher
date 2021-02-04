@@ -8,30 +8,48 @@ from app.workers.DownloadWorker import download_worker_wrapper
 from app.workers.ArchiveExtractorWorker import archive_extractor_worker_wrapper
 
 config = Config.Instance()
-wads_path = os.path.expanduser(config['PATHS']['WADS_PATH'])
-extensions = ['.wad', '.WAD', '.pk3', '.PK3']
+WADS_PATH = os.path.expanduser(config['PATHS']['WADS_PATH'])
+EXTENSIONS = ['.wad', '.pk3', '.deh', '.bex']
+
+
+def is_mod(file): return any(file.lower().endswith(ext) for ext in EXTENSIONS)
+
+
+def search_wad_dir(dir):
+    file_paths = []
+    for (root, _, files) in os.walk(dir):
+        file_paths.extend(
+            [os.path.join(root, file) for file in files if is_mod(file)]
+        )
+    return file_paths
+
 
 def load_wad(dir):
+    loaded_wad = {
+        'name': os.path.basename(dir),
+        'path': dir,
+        'file_paths': search_wad_dir(dir)
+    }
     if 'metadata.json' in os.listdir(dir):
         with open(os.path.join(dir, 'metadata.json'), 'r') as json_file:
-            return json.load(json_file)
-
-    for (root, _, files) in os.walk(dir):
-        for file in files:
-            if any((file.endswith(ext) for ext in extensions)):
-                return { 'name': os.path.basename(dir), 'file_path': os.path.join(root, file), 'path': dir }
-
-    return { 'name': os.path.basename(dir), 'file_path': None, 'path': dir, 'error': 'No mod file found (.wad or .pk3)' }
+            loaded_wad.update(json.load(json_file))
+    try:
+        loaded_wad.update(file_path=loaded_wad['file_paths'][0])
+    except IndexError:
+        loaded_wad.update(file_path=None, error='No mod file found (.wad or .pk3)')
+    return loaded_wad
 
 
 def wad_loader():
-    return [load_wad(os.path.join(wads_path, dir)) for dir in os.listdir(wads_path)
-                                                   if os.path.isdir(os.path.join(wads_path, dir))]
+    return [load_wad(os.path.join(WADS_PATH, dir)) for dir in os.listdir(WADS_PATH)
+                                                   if os.path.isdir(os.path.join(WADS_PATH, dir))]
+
 
 def save_wad(item):
     metadata_file_path = os.path.join(item['path'], 'metadata.json')
     with open(metadata_file_path, 'w+', encoding='utf-8') as f:
         json.dump(item, f, ensure_ascii=False, indent=4)
+
 
 class Wads(Model):
     def __init__(self):
@@ -39,9 +57,11 @@ class Wads(Model):
         self.load()
         self.wad_dir_files = []
         self.current_idgames_wad_id = None
+        self.load_ordered_files = []
 
     def select_wad(self, id):
         selected_wad = self.find(id)
+        self.load_ordered_files = selected_wad['file_paths']
 
         self.broadcast(('SELECT_WAD', selected_wad))
 
@@ -84,5 +104,7 @@ class Wads(Model):
         self.broadcast(('REMOVE_WAD', wad))
         shutil.rmtree(wad['path'])
 
+    def set_load_order(self, files):
+        self.load_ordered_files = files
 
 sys.modules[__name__] = Wads()
