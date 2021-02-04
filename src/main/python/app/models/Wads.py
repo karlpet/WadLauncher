@@ -66,10 +66,14 @@ class Wads(Model):
         self.broadcast(('SELECT_WAD', selected_wad))
 
     def extract_archive(self, file_path, should_remove_archive=False, item={}):
-        done_handlers = [
-            lambda wad_dir: self.import_wad(wad_dir, item)
-        ]
-        archive_extractor_worker_wrapper(file_path, should_remove_archive, done_handlers)
+        def handle_import_wad(wad_dir):
+            self.import_wad(wad_dir, item)
+
+        archive_extractor_worker_wrapper(
+            file_path,
+            should_remove_archive,
+            [handle_import_wad]
+        )
 
     def import_wad(self, wad_dir, item={}):
         id = self.create(**load_wad(wad_dir), **item)
@@ -78,27 +82,54 @@ class Wads(Model):
 
     def idgames_download(self, item, mirror=None):
         id = item['id']
-        progress_handlers = [
-            lambda *args: self.broadcast(('DOWNLOAD_PROGRESS', (id, args)))
-        ]
-        download_handlers = [
-            lambda _: self.broadcast(('DOWNLOAD_FINISHED', id)),
-            lambda file_path: self.extract_archive(file_path, True, item)
-        ]
-        download_worker_wrapper(item, progress_handlers, download_handlers, mirror)
+        def handle_download_progress(*args):
+            self.broadcast(('DOWNLOAD_PROGRESS', (id, args)))
+        def handle_download_finished():
+            self.broadcast(('DOWNLOAD_FINISHED', id))
+        def handle_extract_archive(file_path):
+            self.extract_archive(file_path, True, item)
+
+        download_worker_wrapper(
+            item,
+            [handle_download_progress],
+            [
+                handle_download_finished,
+                handle_extract_archive
+            ],
+            mirror
+        )
 
     def idgames_random(self):
-        handlers = [lambda result: self.broadcast(('RANDOM_WAD', result))]
-        api_worker_wrapper(DWApiMethod.RANDOM, handlers)
-    
+        def handle_get_random(result):
+            self.broadcast(('RANDOM_WAD', result))
+
+        api_worker_wrapper(
+            DWApiMethod.RANDOM,
+            [handle_get_random]
+        )
+
     def idgames_get(self, wad_id):
-        handlers = [lambda result: self.broadcast(('DETAIL_WAD', result))]
-        api_worker_wrapper(DWApiMethod.GET, handlers, wad_id, 'id')    
-    
+        def handle_idgames_get_detail(result):
+            self.broadcast(('DETAIL_WAD', result))
+
+        api_worker_wrapper(
+            DWApiMethod.GET,
+            [handle_idgames_get_detail],
+            wad_id,
+            'id'
+        )    
+
     def idgames_search(self, text, search_by):
-        handlers = [lambda result: self.broadcast(('SEARCH_WADS', result))]
-        api_worker_wrapper(DWApiMethod.SEARCH, handlers, text, search_by)
-    
+        def handle_idgames_search(result):
+            self.broadcast(('SEARCH_WADS', result))
+
+        api_worker_wrapper(
+            DWApiMethod.SEARCH,
+            [handle_idgames_search],
+            text,
+            search_by
+        )
+
     def remove(self, id):
         wad = self.delete(id)
         self.broadcast(('REMOVE_WAD', wad))
