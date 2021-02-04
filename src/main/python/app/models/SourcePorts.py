@@ -1,16 +1,23 @@
-import sys
+import sys, os
 
-from app.config import Config
 from core.base.Model import Model
 
-def source_port_loader():
-    config = Config.Instance()
-    source_ports_config = config['SOURCEPORTS']
+from app.config import Config
+from configparser import ConfigParser
 
-    source_ports = [{'name': source_port,
-                     'template': source_ports_config[source_port]}
-                     for source_port in source_ports_config]
-    
+config = Config.Instance()
+BASE_PATH = os.path.expanduser(config['PATHS']['BASE_PATH'])
+SOURCE_PORTS_INI_PATH = os.path.join(BASE_PATH, 'source_ports.ini')
+SOURCE_PORTS_CONFIG = ConfigParser(allow_no_value=True)
+SOURCE_PORTS_CONFIG.read(SOURCE_PORTS_INI_PATH)
+
+def source_port_loader():
+    source_ports = []
+    sections = SOURCE_PORTS_CONFIG.sections()
+
+    for section in sections:
+        source_ports.append(SOURCE_PORTS_CONFIG[section])
+
     return source_ports
 
 class SourcePorts(Model):
