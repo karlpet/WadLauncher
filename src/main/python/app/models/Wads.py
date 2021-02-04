@@ -57,9 +57,11 @@ class Wads(Model):
         self.load()
         self.wad_dir_files = []
         self.current_idgames_wad_id = None
+        self.load_ordered_files = []
 
     def select_wad(self, id):
         selected_wad = self.find(id)
+        self.load_ordered_files = selected_wad['file_paths']
 
         self.broadcast(('SELECT_WAD', selected_wad))
 
@@ -102,5 +104,7 @@ class Wads(Model):
         self.broadcast(('REMOVE_WAD', wad))
         shutil.rmtree(wad['path'])
 
+    def set_load_order(self, files):
+        self.load_ordered_files = files
 
 sys.modules[__name__] = Wads()

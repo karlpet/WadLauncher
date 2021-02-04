@@ -24,6 +24,7 @@ class SidebarView:
         self.loadorder_model.rowsRemoved.connect(self.manual_ordering)
         self.loadorder = root.findChild(QListView, 'sidebar_loadorder')
         self.loadorder.setModel(self.loadorder_model)
+        self.loadorder.clicked.connect(self.manual_ordering)
 
         self.search_button = root.findChild(QPushButton, 'sidebar_idgames_search')
         def search(): display_widget(root, WidgetIndices.IDGAMES_SEARCH)
@@ -46,6 +47,8 @@ class SidebarView:
                 item = QStandardItem(file_name)
                 item.setData(file_path, PATH_ROLE)
                 item.setFlags(LOAD_ORDER_ITEM_FLAGS)
+                item.setCheckable(True)
+                item.setCheckState(Qt.Checked)
                 self.loadorder_model.appendRow(item)
         except KeyError:
             print('file paths not found in:', wad['name'])
@@ -54,5 +57,7 @@ class SidebarView:
         file_paths_reordered = []
         for i in range(self.loadorder_model.rowCount()):
             item = self.loadorder_model.item(i)
-            file_paths_reordered.append(item.data(PATH_ROLE))
-        self.wads.update(self.selected_wad_id, file_paths=file_paths_reordered)
+            if item.checkState() == Qt.Checked:
+                file_paths_reordered.append(item.data(PATH_ROLE))
+
+        self.wads.set_load_order(file_paths_reordered)
