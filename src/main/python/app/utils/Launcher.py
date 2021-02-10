@@ -17,7 +17,7 @@ def launch(base_wad, files, iwad, source_port):
     process_call = [
         executable_path,
         source_port['wad_arg'],
-        files,
+        *files,
         source_port['iwad_arg'],
         iwad['path'],
         source_port['save_arg'],
