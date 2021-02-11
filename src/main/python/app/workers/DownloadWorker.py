@@ -43,9 +43,8 @@ class DownloadWorker(QThread):
         self.download_url = mirror_url + dirname + filename
         self.save_path = os.path.join(self.temp_dir, filename)
 
-        pathlib.Path(self.temp_dir).mkdir(parents=True, exist_ok=True)
-
     def run(self):
+        pathlib.Path(self.temp_dir).mkdir(parents=True, exist_ok=True)
         file_path, _ = urllib.request.urlretrieve(self.download_url, self.save_path, self.progress_handler)
         self.downloaded.emit(file_path)
 
