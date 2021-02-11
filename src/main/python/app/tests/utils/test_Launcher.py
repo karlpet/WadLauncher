@@ -15,7 +15,6 @@ mock_Instance = MagicMock(return_value={
 mock_Popen = MagicMock()
 mock_mkdir = MagicMock()
 
-mock_wad = { 'name': 'sunder' }
 mock_files = [
     '~/.wadlauncher/wads/sunder/sunder.wad',
     '~/.wadlauncher/wads/sunder/Guncaster.pk3'
@@ -36,7 +35,7 @@ def test_happy_path(monkeypatch):
     monkeypatch.setattr(Path, 'mkdir', mock_mkdir)
 
     # Assert multiple files works
-    launch(mock_wad, mock_files, mock_iwad, mock_source_port)
+    launch(mock_files, mock_iwad, mock_source_port)
     mock_Instance.assert_called()
     mock_mkdir.assert_called()
 
@@ -48,13 +47,13 @@ def test_happy_path(monkeypatch):
         '-iwad',
         '~/.iwads/doom2.wad',
         '-savedir',
-        os.path.join(os.path.expanduser('~/.wadlauncher/wads'), mock_wad['name'], 'saves')
+        os.path.join(os.path.dirname(os.path.abspath(mock_files[0])), 'saves')
     ]
 
     mock_Popen.assert_called_with(process_call, cwd='~/.sourceports/gzdoom')
 
     # Assert single file works
-    launch(mock_wad, [mock_file], mock_iwad, mock_source_port)
+    launch([mock_file], mock_iwad, mock_source_port)
     process_call = [
         os.path.join(mock_source_port['dir'], mock_source_port['executable']),
         '-file',
@@ -62,24 +61,7 @@ def test_happy_path(monkeypatch):
         '-iwad',
         '~/.iwads/doom2.wad',
         '-savedir',
-        os.path.join(os.path.expanduser('~/.wadlauncher/wads'), mock_wad['name'], 'saves')
-    ]
-    mock_Popen.assert_called_with(process_call, cwd='~/.sourceports/gzdoom')
-
-def test_no_base_wad(monkeypatch):
-    monkeypatch.setattr(Config, 'Instance', mock_Instance)
-    monkeypatch.setattr(subprocess, 'Popen', mock_Popen)
-    monkeypatch.setattr(Path, 'mkdir', mock_mkdir)
-
-    launch(None, mock_files, mock_iwad, mock_source_port)
-
-    process_call = [
-        os.path.join(mock_source_port['dir'], mock_source_port['executable']),
-        '-file',
-        '~/.wadlauncher/wads/sunder/sunder.wad',
-        '~/.wadlauncher/wads/sunder/Guncaster.pk3',
-        '-iwad',
-        '~/.iwads/doom2.wad'
+        os.path.join(os.path.dirname(os.path.abspath(mock_files[0])), 'saves')
     ]
     mock_Popen.assert_called_with(process_call, cwd='~/.sourceports/gzdoom')
 
@@ -88,7 +70,7 @@ def test_no_files(monkeypatch):
     monkeypatch.setattr(subprocess, 'Popen', mock_Popen)
     monkeypatch.setattr(Path, 'mkdir', mock_mkdir)
 
-    launch(None, [], mock_iwad, mock_source_port)
+    launch([], mock_iwad, mock_source_port)
 
     process_call = [
         os.path.join(mock_source_port['dir'], mock_source_port['executable']),
@@ -102,7 +84,7 @@ def test_no_iwad(monkeypatch):
     monkeypatch.setattr(subprocess, 'Popen', mock_Popen)
     monkeypatch.setattr(Path, 'mkdir', mock_mkdir)
 
-    launch(mock_wad, mock_files, None, mock_source_port)
+    launch(mock_files, None, mock_source_port)
 
     process_call = [
         os.path.join(mock_source_port['dir'], mock_source_port['executable']),
@@ -110,6 +92,6 @@ def test_no_iwad(monkeypatch):
         '~/.wadlauncher/wads/sunder/sunder.wad',
         '~/.wadlauncher/wads/sunder/Guncaster.pk3',
         '-savedir',
-        os.path.join(os.path.expanduser('~/.wadlauncher/wads'), mock_wad['name'], 'saves')
+        os.path.join(os.path.dirname(os.path.abspath(mock_files[0])), 'saves')
     ]
     mock_Popen.assert_called_with(process_call, cwd='~/.sourceports/gzdoom')

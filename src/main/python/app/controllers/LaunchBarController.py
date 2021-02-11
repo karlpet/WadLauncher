@@ -11,7 +11,6 @@ class LaunchBarController:
         self.wads = models.wads
         self.all_iwads = sorted(models.iwads.all(), key=lambda k: k['name'])
         self.all_source_ports = sorted(models.source_ports.all(), key=lambda k: k['name'])
-        self.selected_wad = None
         self.selected_iwad = None
         self.selected_source_port = None
         self.view = LaunchBarView(root,
@@ -27,7 +26,6 @@ class LaunchBarController:
         action, data = data
 
         if action == 'SELECT_WAD':
-            self.selected_wad = data
             self.view.update_selected_wad(data)
 
     def select_iwad(self, index):
@@ -38,7 +36,6 @@ class LaunchBarController:
 
     def launch_wad_press(self):
         Launcher.launch(
-            self.selected_wad,
             self.wads.load_ordered_files,
             self.selected_iwad,
             self.selected_source_port
