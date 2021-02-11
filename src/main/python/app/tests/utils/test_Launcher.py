@@ -65,3 +65,51 @@ def test_happy_path(monkeypatch):
         os.path.join(os.path.expanduser('~/.wadlauncher/wads'), mock_wad['name'], 'saves')
     ]
     mock_Popen.assert_called_with(process_call, cwd='~/.sourceports/gzdoom')
+
+def test_no_base_wad(monkeypatch):
+    monkeypatch.setattr(Config, 'Instance', mock_Instance)
+    monkeypatch.setattr(subprocess, 'Popen', mock_Popen)
+    monkeypatch.setattr(Path, 'mkdir', mock_mkdir)
+
+    launch(None, mock_files, mock_iwad, mock_source_port)
+
+    process_call = [
+        os.path.join(mock_source_port['dir'], mock_source_port['executable']),
+        '-file',
+        '~/.wadlauncher/wads/sunder/sunder.wad',
+        '~/.wadlauncher/wads/sunder/Guncaster.pk3',
+        '-iwad',
+        '~/.iwads/doom2.wad'
+    ]
+    mock_Popen.assert_called_with(process_call, cwd='~/.sourceports/gzdoom')
+
+def test_no_files(monkeypatch):
+    monkeypatch.setattr(Config, 'Instance', mock_Instance)
+    monkeypatch.setattr(subprocess, 'Popen', mock_Popen)
+    monkeypatch.setattr(Path, 'mkdir', mock_mkdir)
+
+    launch(None, [], mock_iwad, mock_source_port)
+
+    process_call = [
+        os.path.join(mock_source_port['dir'], mock_source_port['executable']),
+        '-iwad',
+        '~/.iwads/doom2.wad'
+    ]
+    mock_Popen.assert_called_with(process_call, cwd='~/.sourceports/gzdoom')
+
+def test_no_iwad(monkeypatch):
+    monkeypatch.setattr(Config, 'Instance', mock_Instance)
+    monkeypatch.setattr(subprocess, 'Popen', mock_Popen)
+    monkeypatch.setattr(Path, 'mkdir', mock_mkdir)
+
+    launch(mock_wad, mock_files, None, mock_source_port)
+
+    process_call = [
+        os.path.join(mock_source_port['dir'], mock_source_port['executable']),
+        '-file',
+        '~/.wadlauncher/wads/sunder/sunder.wad',
+        '~/.wadlauncher/wads/sunder/Guncaster.pk3',
+        '-savedir',
+        os.path.join(os.path.expanduser('~/.wadlauncher/wads'), mock_wad['name'], 'saves')
+    ]
+    mock_Popen.assert_called_with(process_call, cwd='~/.sourceports/gzdoom')
